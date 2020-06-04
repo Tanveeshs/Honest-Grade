@@ -9,7 +9,9 @@ function App() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [answers, setAnswers] = useState([]);
+  const [showResults, setShowResults] = useState(false);
   const [error, setError] = useState('');
+
 
   const questions = [
     {
@@ -47,6 +49,32 @@ function App() {
 
   const handleClick = e => {
     setCurrentAnswer(e.target.value)
+    setError('');
+  }
+
+  const renderError = () => {
+    if (!error) {
+      return;
+    }
+
+    return <div className='error'>{error}</div>
+  }
+
+  const renderResultsData = () => {
+    return answers.map(answer => {
+      const question = questions.find(
+        question => question.id === answer.questionId
+      );
+      return <div key={question.id}>{question.question}</div>
+    })
+
+  }
+
+  const restart = () => {
+    setAnswers([]);
+    setCurrentAnswer('');
+    setCurrentQuestion(0);
+    setShowResults(false);
   }
 
   const next = () => {
@@ -55,29 +83,51 @@ function App() {
       answer: currentAnswer
     }
 
+    if (!currentAnswer) {
+      setError('Please select an option!');
+      return;
+    }
+
+
+    /////////POTENTIAL BUG -   ANSWER PUSH IS ALWAYS ONE BEHINd///////
     // answers.push(answer);
     setAnswers([...answers, answer]);
-    console.log(answers);
     setCurrentAnswer('');
 
+    console.log(answers);
     if (currentQuestion + 1 < questions.length) {
       setCurrentQuestion(currentQuestion + 1);
       return;
     }
 
+    setShowResults(true);
+
   }
 
-
-  return (
-    <div className="container">
-      <Progress total="3" current={currentQuestion + 1} />
-      <Question question={question.question} />
-      <Answers question={question} currentAnswer={currentAnswer} handleClick={handleClick} />
-      <button className='btn btn-primary' onClick={next}>
-        Confirm and Continue
+  if (showResults) {
+    return (
+      <div className='container results'>
+        <h2>Results</h2>
+        <ul>{renderResultsData()}</ul>
+        <button className='btn btn-primary' onClick={restart}>
+          Restart
       </button>
-    </div>
-  );
+      </div>
+    )
+
+  } else {
+    return (
+      <div className="container">
+        <Progress total="3" current={currentQuestion + 1} />
+        <Question question={question.question} />
+        {renderError()}
+        <Answers question={question} currentAnswer={currentAnswer} handleClick={handleClick} />
+        <button className='btn btn-primary' onClick={next}>
+          Confirm and Continue
+      </button>
+      </div>
+    );
+  }
 }
 
 export default App;
