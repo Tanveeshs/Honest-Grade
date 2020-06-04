@@ -8,6 +8,8 @@ import './App.css';
 function App() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [currentAnswer, setCurrentAnswer] = useState('');
+  const [answers, setAnswers] = useState([]);
+  const [error, setError] = useState('');
 
   const questions = [
     {
@@ -45,6 +47,22 @@ function App() {
 
   const handleClick = e => {
     setCurrentAnswer(e.target.value)
+  }
+
+  const next = () => {
+    const answer = {
+      questionId: question.id,
+      answer: currentAnswer
+    }
+
+    answer.push(answer);
+    setAnswers(answers);
+    setCurrentAnswer('');
+
+    if (currentQuestion + 1 < questions.length){
+      setCurrentQuestion(currentQuestion + 1);
+    }
+
   }
 
 
