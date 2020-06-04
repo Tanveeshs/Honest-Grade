@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Progress from './components/Progress';
 import Question from './components/Question';
 import Answers from './components/Answers';
@@ -55,12 +55,14 @@ function App() {
       answer: currentAnswer
     }
 
-    answer.push(answer);
-    setAnswers(answers);
+    // answers.push(answer);
+    setAnswers([...answers, answer]);
+    console.log(answers);
     setCurrentAnswer('');
 
-    if (currentQuestion + 1 < questions.length){
+    if (currentQuestion + 1 < questions.length) {
       setCurrentQuestion(currentQuestion + 1);
+      return;
     }
 
   }
@@ -68,10 +70,10 @@ function App() {
 
   return (
     <div className="container">
-      <Progress total="3" current="1" />
+      <Progress total="3" current={currentQuestion + 1} />
       <Question question={question.question} />
       <Answers question={question} currentAnswer={currentAnswer} handleClick={handleClick} />
-      <button className='btn btn-primary'>
+      <button className='btn btn-primary' onClick={next}>
         Confirm and Continue
       </button>
     </div>
