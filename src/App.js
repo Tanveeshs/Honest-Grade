@@ -60,12 +60,20 @@ function App() {
     return <div className='error'>{error}</div>
   }
 
+  const renderResultMark = (question, answer) => {
+    if (question.correct_answer === answer.answer) {
+      return <span className='correct'>Correct</span>;
+    }
+
+    return <span className='failed'>Failed</span>
+  }
+
   const renderResultsData = () => {
     return answers.map(answer => {
       const question = questions.find(
         question => question.id === answer.questionId
       );
-      return <div key={question.id}>{question.question}</div>
+      return <div key={question.id}>{question.question} - {renderResultMark(question, answer)}</div>
     })
 
   }
@@ -94,7 +102,6 @@ function App() {
     setAnswers([...answers, answer]);
     setCurrentAnswer('');
 
-    console.log(answers);
     if (currentQuestion + 1 < questions.length) {
       setCurrentQuestion(currentQuestion + 1);
       return;
