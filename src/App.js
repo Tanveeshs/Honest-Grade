@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import Progress from './components/Progress';
 import Question from './components/Question';
 import Answers from './components/Answers';
@@ -6,11 +6,20 @@ import Answers from './components/Answers';
 import './App.css';
 
 function App() {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [currentAnswer, setCurrentAnswer] = useState('');
-  const [answers, setAnswers] = useState([]);
-  const [showResults, setShowResults] = useState(false);
-  const [error, setError] = useState('');
+  const initialState = {
+    currentQuestion: 0,
+    currentAnswer: '',
+    answers: [].correct_answer,
+    showResults: false,
+    error: ''
+  }
+  
+//REPLACED BY INITIALSTATE
+  // const [currentQuestion, setCurrentQuestion] = useState(0);
+  // const [currentAnswer, setCurrentAnswer] = useState('');
+  // const [answers, setAnswers] = useState([]);
+  // const [showResults, setShowResults] = useState(false);
+  // const [error, setError] = useState('');
 
 
   const questions = [
