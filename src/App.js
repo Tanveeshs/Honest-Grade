@@ -5,6 +5,45 @@ import Answers from './components/Answers';
 
 import './App.css';
 
+const SET_CURRENT_ANSWER = 'SET_CURRENT_ANSWER';
+const SET_CURRENT_QUESTION = 'SET_CURRENT_QUESTION';
+const SET_ANSWERS = 'SET_ANSWERS';
+const SET_SHOW_RESULTS = 'SET_SHOW_RESULTS';
+const SET_ERROR = 'SET_ERROR';
+
+function quizReducer(state, action) {
+  switch (action.type) {
+    case SET_CURRENT_ANSWER:
+      return {
+        ...state,
+        currentAnswer: action.currentAnswer,
+      };
+    case SET_CURRENT_QUESTION:
+      return {
+        ...state,
+        currentAnswer: action.currentQuestion,
+      };
+    case SET_ANSWERS:
+      return {
+        ...state,
+        currentAnswer: action.answers,
+      };
+    case SET_SHOW_RESULTS:
+      return {
+        ...state,
+        currentAnswer: action.showResults,
+      };
+    case SET_ERROR:
+      return {
+        ...state,
+        currentAnswer: action.error,
+      };
+
+    default:
+      return state;
+  }
+}
+
 function App() {
   const initialState = {
     currentQuestion: 0,
@@ -13,8 +52,12 @@ function App() {
     showResults: false,
     error: ''
   }
-  
-//REPLACED BY INITIALSTATE
+
+  const [state, dispatch] = useReducer(quizReducer, initialState)
+  const { currentQuestion, currentAnswer, answers, showResults, error } = state;
+
+
+  //REPLACED BY INITIALSTATE
   // const [currentQuestion, setCurrentQuestion] = useState(0);
   // const [currentAnswer, setCurrentAnswer] = useState('');
   // const [answers, setAnswers] = useState([]);
@@ -57,7 +100,7 @@ function App() {
   const question = questions[currentQuestion];
 
   const handleClick = e => {
-    setCurrentAnswer(e.target.value)
+    dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: e.target.answer })  // setCurrentAnswer('');
     setError('');
   }
 
@@ -89,7 +132,7 @@ function App() {
 
   const restart = () => {
     setAnswers([]);
-    setCurrentAnswer('');
+    dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: '' })  // setCurrentAnswer('');
     setCurrentQuestion(0);
     setShowResults(false);
   }
@@ -109,7 +152,7 @@ function App() {
     /////////POTENTIAL BUG -   ANSWER PUSH IS ALWAYS ONE BEHINd///////
     // answers.push(answer);
     setAnswers([...answers, answer]);
-    setCurrentAnswer('');
+    dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: '' })  // setCurrentAnswer('');
 
     if (currentQuestion + 1 < questions.length) {
       setCurrentQuestion(currentQuestion + 1);
