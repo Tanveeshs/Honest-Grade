@@ -8,7 +8,7 @@ function Answer(props) {
 
     let classes = ['answer'];
 
-    const handleClick = e => {
+    const handleClick = e => { 
         props.dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: e.target.value })  // setCurrentAnswer(e.target.answer);
         props.dispatch({ type: SET_ERROR, error: '' })  //setError('');
       }
@@ -28,5 +28,5 @@ function Answer(props) {
 
 
 };
-
+ 
 export default Answer;

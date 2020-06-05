@@ -2,6 +2,8 @@ import React, { useReducer } from 'react';
 import Progress from './components/Progress';
 import Question from './components/Question';
 import Answers from './components/Answers';
+import QuizContext from './context/quizContext';
+
 import {
   SET_CURRENT_ANSWER,
   SET_CURRENT_QUESTION,
@@ -11,49 +13,12 @@ import {
   RESET_QUIZ
 } from "./Reducers/types"
 
+import quizReducer from './Reducers/quizReducer'
+
 import './App.css';
+import quizContext from './context/quizContext';
 
-function quizReducer(state, action) {
-  switch (action.type) {
-    case SET_CURRENT_ANSWER:
-      return {
-        ...state,
-        currentAnswer: action.currentAnswer,
-      };
-    case SET_CURRENT_QUESTION:
-      return {
-        ...state,
-        currentQuestion: action.currentQuestion,
-      };
-    case SET_ANSWERS:
-      return {
-        ...state,
-        answers: action.answers,
-      };
-    case SET_SHOW_RESULTS:
-      return {
-        ...state,
-        showResults: action.showResults,
-      };
-    case SET_ERROR:
-      return {
-        ...state,
-        error: action.error,
-      };
-    case RESET_QUIZ:
-      return {
-        ...state,
-        currentQuestion: 0,
-        currentAnswer: '',
-        answers: [],
-        showResults: false,
-        error: ''
-      };
 
-    default:
-      return state;
-  }
-}
 
 function App() {
 
@@ -156,10 +121,6 @@ function App() {
       dispatch({ type: SET_ERROR, error: 'Please select an option!' }) //setError('Please select an option!');
       return;
     }
-
-
-    /////////POTENTIAL BUG -   ANSWER PUSH IS ALWAYS ONE BEHINd///////
-    // answers.push(answer);
     
     dispatch({ type: SET_ANSWERS, answers: [...answers, answer] }) //setAnswers([...answers, answer]);
     // console.log(answers);
