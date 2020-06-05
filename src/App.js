@@ -2,14 +2,16 @@ import React, { useReducer } from 'react';
 import Progress from './components/Progress';
 import Question from './components/Question';
 import Answers from './components/Answers';
+import {
+  SET_CURRENT_ANSWER,
+  SET_CURRENT_QUESTION,
+  SET_ANSWERS,
+  SET_SHOW_RESULTS,
+  SET_ERROR,
+  RESET_QUIZ
+} from "./Reducers/types"
 
 import './App.css';
-
-const SET_CURRENT_ANSWER = 'SET_CURRENT_ANSWER';
-const SET_CURRENT_QUESTION = 'SET_CURRENT_QUESTION';
-const SET_ANSWERS = 'SET_ANSWERS';
-const SET_SHOW_RESULTS = 'SET_SHOW_RESULTS';
-const SET_ERROR = 'SET_ERROR';
 
 function quizReducer(state, action) {
   switch (action.type) {
@@ -21,22 +23,31 @@ function quizReducer(state, action) {
     case SET_CURRENT_QUESTION:
       return {
         ...state,
-        currentAnswer: action.currentQuestion,
+        currentQuestion: action.currentQuestion,
       };
     case SET_ANSWERS:
       return {
         ...state,
-        currentAnswer: action.answers,
+        answers: action.answers,
       };
     case SET_SHOW_RESULTS:
       return {
         ...state,
-        currentAnswer: action.showResults,
+        showResults: action.showResults,
       };
     case SET_ERROR:
       return {
         ...state,
-        currentAnswer: action.error,
+        error: action.error,
+      };
+    case RESET_QUIZ:
+      return {
+        ...state,
+        currentQuestion: 0,
+        currentAnswer: '',
+        answers: [],
+        showResults: false,
+        error: ''
       };
 
     default:
@@ -45,10 +56,11 @@ function quizReducer(state, action) {
 }
 
 function App() {
+
   const initialState = {
     currentQuestion: 0,
     currentAnswer: '',
-    answers: [].correct_answer,
+    answers: [],
     showResults: false,
     error: ''
   }
@@ -99,11 +111,6 @@ function App() {
 
   const question = questions[currentQuestion];
 
-  const handleClick = e => {
-    dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: e.target.answer })  // setCurrentAnswer('');
-    setError('');
-  }
-
   const renderError = () => {
     if (!error) {
       return;
@@ -131,10 +138,12 @@ function App() {
   }
 
   const restart = () => {
-    setAnswers([]);
-    dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: '' })  // setCurrentAnswer('');
-    setCurrentQuestion(0);
-    setShowResults(false);
+    // REPLACES EVERYTHING BELOW
+    dispatch({ type: RESET_QUIZ });
+    //setAnswers([]);
+    // setCurrentAnswer('');
+    // setCurrentQuestion(0);
+    // setShowResults(false);
   }
 
   const next = () => {
@@ -144,22 +153,24 @@ function App() {
     }
 
     if (!currentAnswer) {
-      setError('Please select an option!');
+      dispatch({ type: SET_ERROR, error: 'Please select an option!' }) //setError('Please select an option!');
       return;
     }
 
 
     /////////POTENTIAL BUG -   ANSWER PUSH IS ALWAYS ONE BEHINd///////
     // answers.push(answer);
-    setAnswers([...answers, answer]);
+    
+    dispatch({ type: SET_ANSWERS, answers: [...answers, answer] }) //setAnswers([...answers, answer]);
+    // console.log(answers);
     dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: '' })  // setCurrentAnswer('');
 
     if (currentQuestion + 1 < questions.length) {
-      setCurrentQuestion(currentQuestion + 1);
+      dispatch({ type: SET_CURRENT_QUESTION, currentQuestion: currentQuestion + 1 }) //setCurrentQuestion(currentQuestion + 1);
       return;
     }
 
-    setShowResults(true);
+    dispatch({ type: SET_SHOW_RESULTS, showResults: true }) //setShowResults(true);
 
   }
 
@@ -180,7 +191,7 @@ function App() {
         <Progress total="3" current={currentQuestion + 1} />
         <Question question={question.question} />
         {renderError()}
-        <Answers question={question} currentAnswer={currentAnswer} handleClick={handleClick} />
+        <Answers question={question} currentAnswer={currentAnswer} dispatch={dispatch} />
         <button className='btn btn-primary' onClick={next}>
           Confirm and Continue
       </button>
