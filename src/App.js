@@ -22,26 +22,6 @@ import quizContext from './context/quizContext';
 
 function App() {
 
-  const initialState = {
-    currentQuestion: 0,
-    currentAnswer: '',
-    answers: [],
-    showResults: false,
-    error: ''
-  }
-
-  const [state, dispatch] = useReducer(quizReducer, initialState)
-  const { currentQuestion, currentAnswer, answers, showResults, error } = state;
-
-
-  //REPLACED BY INITIALSTATE
-  // const [currentQuestion, setCurrentQuestion] = useState(0);
-  // const [currentAnswer, setCurrentAnswer] = useState('');
-  // const [answers, setAnswers] = useState([]);
-  // const [showResults, setShowResults] = useState(false);
-  // const [error, setError] = useState('');
-
-
   const questions = [
     {
       id: 1,
@@ -73,6 +53,26 @@ function App() {
       correct_answer: 'c',
     },
   ];
+
+  const initialState = {
+    questions,
+    currentQuestion: 0,
+    currentAnswer: '',
+    answers: [],
+    showResults: false,
+    error: ''
+  }
+
+  const [state, dispatch] = useReducer(quizReducer, initialState)
+  const { currentQuestion, currentAnswer, answers, showResults, error } = state;
+
+
+  //REPLACED BY INITIALSTATE
+  // const [currentQuestion, setCurrentQuestion] = useState(0);
+  // const [currentAnswer, setCurrentAnswer] = useState('');
+  // const [answers, setAnswers] = useState([]);
+  // const [showResults, setShowResults] = useState(false);
+  // const [error, setError] = useState('');
 
   const question = questions[currentQuestion];
 
@@ -121,7 +121,7 @@ function App() {
       dispatch({ type: SET_ERROR, error: 'Please select an option!' }) //setError('Please select an option!');
       return;
     }
-    
+
     dispatch({ type: SET_ANSWERS, answers: [...answers, answer] }) //setAnswers([...answers, answer]);
     // console.log(answers);
     dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: '' })  // setCurrentAnswer('');
@@ -148,15 +148,17 @@ function App() {
 
   } else {
     return (
-      <div className="container">
-        <Progress total="3" current={currentQuestion + 1} />
-        <Question question={question.question} />
-        {renderError()}
-        <Answers question={question} currentAnswer={currentAnswer} dispatch={dispatch} />
-        <button className='btn btn-primary' onClick={next}>
-          Confirm and Continue
+      <QuizContext.Provider value={{ state, dispatch }}>
+        <div className="container">
+          <Progress total="3" current={currentQuestion + 1} />
+          <Question question={question.question} />
+          {renderError()}
+          <Answers question={question} currentAnswer={currentAnswer} dispatch={dispatch} />
+          <button className='btn btn-primary' onClick={next}>
+            Confirm and Continue
       </button>
-      </div>
+        </div>
+      </QuizContext.Provider >
     );
   }
 }
