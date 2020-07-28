@@ -1,1 +1,1 @@
-A Quiz React app to practice using useContext and useReducer Hooks.
+A ReactJS Quiz Game app using useContext and useReducer Hooks.
