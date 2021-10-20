@@ -11,7 +11,7 @@ function App() {
   const [disp,setDisp] = useState(false);
 
   useEffect(()=>{
-    axios.post('https://honestgrade.herokuapp.com/assessment/start', {
+    axios.post('http://localhost:8080/assessment/start', {
           "studentId": "61366028e87ffc38b8f8f937",
           "examId": "616f12e40f50d70016d32c30"
         }

@@ -16,25 +16,32 @@ import axios from "axios";
 import '../App.css';
 
 export function Quiz(props) {
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-    const questions = props.questions;
+    const questions1= props.questions;
     const assessmentId = props.assessmentId;
     const numberQuestions = props.numberQuestions
     const examId = props.examId;
     const initialState = {
-        questions,
+        questions:questions1,
         assessmentId,
         examId,
         currentQuestion: 0,
         currentAnswer: '',
         answers: [],
         error: '',
+        first:false
     }
     const [state, dispatch] = useReducer(quizReducer, initialState)
-    const { currentQuestion, currentAnswer, answers, error } = state;
-    console.log(questions);
-    const question = questions[currentQuestion];
-    console.log("STATE",state);
+    let {first,questions, currentQuestion, currentAnswer, answers, error } = state;
+    console.log("STATE HERe",state)
+    let questionArray;
+    if(first) {
+       questionArray = questions;
+    }else {
+        questionArray = questions1;
+    }
+    console.log("QUESTION ARRAY",questionArray);
+    const question = questionArray[currentQuestion];
+    // console.log("STATE",state);
 
     const renderError = () => {
         if (!error) {
@@ -54,7 +61,7 @@ export function Quiz(props) {
         }
         await dispatch({ type: SET_ANSWERS, answers: [...answers, answer] })
         if((currentQuestion+1)%2===0){
-            const resp = await axios.post('https://honestgrade.herokuapp.com/assessment/answerQuestion',{
+            const resp = await axios.post('http://localhost:8080/assessment/answerQuestion',{
                 assessmentId:assessmentId,
                 examId:examId,
                 questionId1:answers[0].questionId,
@@ -62,23 +69,32 @@ export function Quiz(props) {
                 answer1:answers[0].answer,
                 answer2:answer.answer
             });
+            console.log("QUESTIONS",resp.data.questions);
+            console.log("QQ")
             await dispatch({type:ADD_QUESTIONS,questions:resp.data.questions});
             await dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: '' })
             if (currentQuestion + 1 < numberQuestions) {
-
                 console.log("OR HERE??")
                 await dispatch({ type: SET_CURRENT_QUESTION, currentQuestion: currentQuestion + 1 }) //setCurrentQuestion(currentQuestion + 1);
-                forceUpdate();
                 return;
             }else {
                 console.log("IS IT HERE?")
                 //TEST IS OVER
+                //const resp = await axios.post('http://localhost:8080/assessment/answerQuestion',{
+                //                 assessmentId:assessmentId,
+                //                 examId:examId,
+                //                 questionId1:answers[0].questionId,
+                //                 questionId2:answer.questionId,
+                //                 answer1:answers[0].answer,
+                //                 answer2:answer.answer
+                //             });
             }
         }else {
+            //AS OUR TEST WILL HAVE EVEN QUESTION ALWAYS HAVE EVEN QUESTIONS HENCE WE DONT NEED TO CHECK
+            //TEST END CONDITION HERE
             dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: '' })
             if (currentQuestion + 1 < questions.length) {
                 dispatch({ type: SET_CURRENT_QUESTION, currentQuestion: currentQuestion + 1 }) //setCurrentQuestion(currentQuestion + 1);
-                forceUpdate();
                 return;
             }
         }

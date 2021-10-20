@@ -47,7 +47,9 @@ import {
         let questions = action.questions;
         let obj =  {
           ...state,
-          questions:[...questions,...action.questions]
+          questions:[...state.questions,...questions],
+          answers:[],
+          first:true
         }
         return obj;
       default:
