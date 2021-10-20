@@ -13,24 +13,24 @@ function Answers() {
         <>n
             <Answer
                 letter='a'
-                answer={question.answer_a}
+                answer={question.question.options[0]}
                 dispatch={dispatch}
                 selected={currentAnswer === 'a'}
             />
             <Answer letter='b'
-                answer={question.answer_b}
+                answer={question.question.options[1]}
                 dispatch={dispatch} //handleClick={props.handleClick}
                 selected={currentAnswer === 'b'}
             />
             <Answer
                 letter='c'
-                answer={question.answer_c}
+                answer={question.question.options[2]}
                 dispatch={dispatch}
                 selected={currentAnswer === 'c'}
             />
             <Answer
                 letter='d'
-                answer={question.answer_d}
+                answer={question.question.options[3]}
                 dispatch={dispatch}
                 selected={currentAnswer === 'd'}
             />
