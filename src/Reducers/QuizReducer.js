@@ -1,11 +1,11 @@
 import {
-    SET_CURRENT_ANSWER,
-    SET_CURRENT_QUESTION,
-    SET_ANSWERS,
-    SET_SHOW_RESULTS,
-    SET_ERROR,
-    RESET_QUIZ
-  } from "./types"
+  SET_CURRENT_ANSWER,
+  SET_CURRENT_QUESTION,
+  SET_ANSWERS,
+  SET_SHOW_RESULTS,
+  SET_ERROR,
+  RESET_QUIZ, ADD_QUESTIONS
+} from "./types"
 
   function quizReducer(state, action) {
     switch (action.type) {
@@ -43,7 +43,13 @@ import {
           showResults: false,
           error: ''
         }
-  
+      case ADD_QUESTIONS:
+        let questions = action.questions;
+        let obj =  {
+          ...state,
+          questions:[...questions,...action.questions]
+        }
+        return obj;
       default:
         return state;
     }
