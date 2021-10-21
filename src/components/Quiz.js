@@ -28,11 +28,11 @@ export function Quiz(props) {
         currentAnswer: '',
         answers: [],
         error: '',
-        first:false
+        first:false,
+        end_quiz_flag:false
     }
     const [state, dispatch] = useReducer(quizReducer, initialState)
-    let {first,questions, currentQuestion, currentAnswer, answers, error } = state;
-    console.log("STATE HERe",state)
+    let {first,questions, currentQuestion, currentAnswer, answers, error, end_quiz_flag } = state;
     let questionArray;
     if(first) {
        questionArray = questions;
@@ -61,7 +61,7 @@ export function Quiz(props) {
         }
         await dispatch({ type: SET_ANSWERS, answers: [...answers, answer] })
         if((currentQuestion+1)%2===0){
-            const resp = await axios.post('http://localhost:8080/assessment/answerQuestion',{
+            const resp = await axios.post('https://honestgrade.herokuapp.com/assessment/answerQuestion',{
                 assessmentId:assessmentId,
                 examId:examId,
                 questionId1:answers[0].questionId,
@@ -73,21 +73,29 @@ export function Quiz(props) {
             console.log("QQ")
             await dispatch({type:ADD_QUESTIONS,questions:resp.data.questions});
             await dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: '' })
-            if (currentQuestion + 1 < numberQuestions) {
+            if (currentQuestion < numberQuestions) {
                 console.log("OR HERE??")
                 await dispatch({ type: SET_CURRENT_QUESTION, currentQuestion: currentQuestion + 1 }) //setCurrentQuestion(currentQuestion + 1);
                 return;
             }else {
                 console.log("IS IT HERE?")
-                //TEST IS OVER
-                //const resp = await axios.post('http://localhost:8080/assessment/answerQuestion',{
-                //                 assessmentId:assessmentId,
-                //                 examId:examId,
-                //                 questionId1:answers[0].questionId,
-                //                 questionId2:answer.questionId,
-                //                 answer1:answers[0].answer,
-                //                 answer2:answer.answer
-                //             });
+                await dispatch({type:'END_QUIZ', end_quiz_flag:true})
+                try{
+                    await axios.post('https://honestgrade.herokuapp.com/assessment/answerQuestion',{
+                                assessmentId:assessmentId,
+                                examId:examId,
+                                questionId1:answers[0].questionId,
+                                questionId2:answer.questionId,
+                                answer1:answers[0].answer,
+                                answer2:answer.answer
+                            })
+                            .then(res=>console.log(res.data))
+                            .catch(err=>console.log(err))
+                }
+                catch(err){
+                    console.log('ERR',err)
+                }
+                
             }
         }else {
             //AS OUR TEST WILL HAVE EVEN QUESTION ALWAYS HAVE EVEN QUESTIONS HENCE WE DONT NEED TO CHECK

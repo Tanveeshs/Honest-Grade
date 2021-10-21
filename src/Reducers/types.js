@@ -5,3 +5,4 @@ export const SET_SHOW_RESULTS = 'SET_SHOW_RESULTS';
 export const SET_ERROR = 'SET_ERROR';
 export const RESET_QUIZ = 'RESET_QUIZ';
 export const ADD_QUESTIONS = 'ADD_QUESTIONS';
+export const END_QUIZ = 'END_QUIZ'

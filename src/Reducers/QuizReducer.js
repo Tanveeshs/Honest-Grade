@@ -4,7 +4,7 @@ import {
   SET_ANSWERS,
   SET_SHOW_RESULTS,
   SET_ERROR,
-  RESET_QUIZ, ADD_QUESTIONS
+  RESET_QUIZ, ADD_QUESTIONS, END_QUIZ
 } from "./types"
 
   function quizReducer(state, action) {
@@ -42,6 +42,11 @@ import {
           answers: [],
           showResults: false,
           error: ''
+        }
+      case END_QUIZ:
+        return{
+          ...state,
+          end_quiz_flag:action.end_quiz_flag
         }
       case ADD_QUESTIONS:
         let questions = action.questions;
