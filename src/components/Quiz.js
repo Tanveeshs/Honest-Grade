@@ -151,6 +151,7 @@ export function Quiz(props) {
                     <Question question={question.question.question} />
                     {renderError()}
                     <Answers question={question} currentAnswer={currentAnswer} dispatch={dispatch} />
+                    Difficulty:{question.question.difficulty}
                     <button className='btn btn-primary' onClick={next}>
                         Confirm and Continue
                     </button>
