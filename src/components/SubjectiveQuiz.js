@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import use from "use";
+import { useAlert } from "react-alert";
+import Loader from "react-loader-spinner";
+import bgimg from '../assets/bg1.png'
+
 
 
 export function SubjectiveQuiz(props) {
@@ -8,9 +11,11 @@ export function SubjectiveQuiz(props) {
     let [questions, setQuestions] = useState(props.questions);
     const assessmentId = props.assessmentId;
     console.log(assessmentId)
+    const alert = useAlert()
 
     const numberQuestions = props.numberQuestions;
     let [count, setCount] = useState(0);
+    let [scoreLoading, setScoreLoading] = useState(false)
     let [currentAnswer, setCurrentAnswer] = useState('');
     let [answer, setAnswer] = useState();
     let [score, setScore] = useState();
@@ -42,7 +47,7 @@ export function SubjectiveQuiz(props) {
             setCount(count + 1);
         } else {
             //SHOW ALERT
-            console.log("CANT GO AHEAD")
+            alert.show('YOU CANNOT GO AHEAD!')
         }
     }
 
@@ -59,11 +64,12 @@ export function SubjectiveQuiz(props) {
             setCount(count - 1);
         } else {
             //SHOW ALERT
-            console.log("CANT GO BEFORE")
+            alert.show('YOU CANNOT GO BACK!')
         }
     }
 
     function onButtonClick() {
+        setScoreLoading(true)
         console.log("BUTTON CLICK")
         axios.post('https://honestgrade.herokuapp.com/assessment/answerSubjectiveAssessment', {
             answers: answer,
@@ -71,45 +77,108 @@ export function SubjectiveQuiz(props) {
         }).then(resp => {
             console.log(resp.data.assessment.score);
             setScore(resp.data.assessment.score.toString());
+            setScoreLoading(false)
             setTotalMarks(resp.data.assessment.totalMarks.toString())
         })
             .catch(err => {
                 console.log(err)
             })
+        
     }
     console.log("SCORE",score)
+    const containerStyles = {
+        display:'flex',
+        flexDirection:'column',
+        justifyContent:'center',
+        alignItems:'center',
+        backgroundImage:'url('+ bgimg +')',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        width: '100vw',
+        height: '100vh'
+    }
+    const questionStyles={
+        padding:'7%',
+        width:'50%',
+        border:'0.5px solid lightgray',
+        borderRadius:'5px',
+        display:'flex',
+        flexDirection:'column',
+        flex:'flex-start'
+    }
+    const buttons = {
+        width:'150px',
+        alignSelf:'center',
+        padding:'6px',
+        color:'white',
+        fontWeight:'bold',
+        textTransform:'uppercase',
+        fontSize:'16px',
+        backgroundColor:'orange',
+        border:'1px solid white',
+        borderRadius:'5px'
+    }
 
     // console.log("SCORE",score)
     if (props.disp === true) {
-        if(score===undefined){
-            return (<div style={{margin: 20}}>
-                <h1>Subjective Answer Checker</h1>
-                <div>
-                    {questions[count] !== undefined ?
-                        <h2>{questions[count].question.question}</h2>: <h2>Loading...</h2>}
-                    {questions[count] !== undefined ?
-                        <h3>{questions[count].question.outOf} Marks</h3>: <h2>Loading...</h2>}
-
+        if(scoreLoading===false && score===undefined){
+            return (
+            <div style={containerStyles}>
+                <h1>Subjective Answer test</h1>
+                <div style={questionStyles}>
+                    <div style={{
+                        display:'flex',
+                        alignItems:'center',
+                        justifyContent:'space-between',
+                        marginBottom:'5%'
+                    }}>
+                        {questions[count] !== undefined ?
+                            <h2>Q. {questions[count].question.question}</h2>: <h2>Loading...</h2>}
+                        {questions[count] !== undefined ?
+                            <p style={{
+                                display:'flex',
+                                flex:'flex-end',
+                                fontSize:'14px'
+                            }}>{questions[count].question.outOf} Marks</p>: <h2>Loading...</h2>}
+                    </div>
                     <textarea
                         type="text"
                         value={currentAnswer}
                         onChange={handleChange}
+                        maxLength={1000}
+                        placeholder="Fill your answer here"
                     />
                     <br/>
-                    <button onClick={onPrevClick}>Prev</button>
-                    <button onClick={onNextClick}>Next</button>
+                    <button style={buttons} onClick={onPrevClick} >Back</button>
+                    <button style={buttons} onClick={onNextClick}>Next</button>
                     <br/>
                     <br/>
-                    <button onClick={onButtonClick}>Submit</button>
+                    <button style={buttons} onClick={onButtonClick}>Submit</button>
 
 
                 </div>
             </div>)
-        }else {
-            return (<div>
-                Congratulations! You have got {score} marks out of {totalMarks}
-            </div>)
         }
+        else {
+            if(scoreLoading){
+            return (<Loader
+                type="Circles"
+                color="#00BFFF"
+                height={100}
+                width={100}
+                timeout={3000}
+                />)}
+            else{
+                return(
+                    <div style={containerStyles}>
+                        <h1>CONGRATULATIONS!</h1>
+                        <h3>You have scored {score} out of {totalMarks}</h3>
+                    </div>
+                )
+            }
+        }
+        
 
 
 
