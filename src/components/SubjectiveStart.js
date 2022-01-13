@@ -9,14 +9,14 @@ export function SubjectiveStart(){
     const [numberQuestions,setNumberQuestions] = useState(0);
     const [disp,setDisp] = useState(false);
     const startButton = {
-        padding:'5px',
-        width:'20%',
-        height:'30px',
+        padding:'7px',
         display:'flex',
-        flexDirection:'column',
+        width:'200px',
+        justifyContent:'center',
         color:'white',
+        alignContent:'center',
         backgroundColor:'orange',
-        border:'1px solid black',
+        border:'1px solid white',
         borderRadius:'5px',
         textTransform:'uppercase',
         fontWeight:'bold',
@@ -56,7 +56,6 @@ export function SubjectiveStart(){
             <div style={main}>
                 <div style={container}>
                     <h1 style={{fontSize:'48px'}}>Welcome to your Test!</h1>
-                    <h4 style={{color:'blue'}}>Please click the button below to begin your test</h4>
                     <button onClick={onClick} style={startButton}>Start </button>
                     <SubjectiveQuiz disp={disp} questions={questions} 
                     assessmentId={assessmentId}  numberQuestions={numberQuestions}>

@@ -5,13 +5,17 @@ import App from './App';
 import { transitions, positions, Provider as AlertProvider } from 'react-alert'
 import AlertTemplate from 'react-alert-template-basic'
 import * as serviceWorker from './serviceWorker';
+import { BrowserRouter } from 'react-router-dom';
 
 ReactDOM.render(
+  <BrowserRouter>
   <React.StrictMode>
     <AlertProvider template={AlertTemplate}>
     <App />
     </AlertProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
+  </BrowserRouter>
+  ,
   document.getElementById('root')
 );
 

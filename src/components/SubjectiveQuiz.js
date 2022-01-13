@@ -3,6 +3,8 @@ import axios from "axios";
 import { useAlert } from "react-alert";
 import Loader from "react-loader-spinner";
 import bgimg from '../assets/bg1.png'
+import {Button} from '@material-ui/core'
+import { Link } from "react-router-dom";
 
 
 
@@ -96,7 +98,8 @@ export function SubjectiveQuiz(props) {
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         width: '100vw',
-        height: '100vh'
+        height: '100vh',
+        
     }
     const questionStyles={
         padding:'7%',
@@ -173,7 +176,13 @@ export function SubjectiveQuiz(props) {
                 return(
                     <div style={containerStyles}>
                         <h1>CONGRATULATIONS!</h1>
-                        <h3>You have scored {score} out of {totalMarks}</h3>
+                        <h2>You have scored {score} out of {totalMarks}</h2>
+                        <h2 style={{marginTop:'5%'}}>TEST END</h2>
+                            <Button color='default' variant='contained'>
+                                <Link to="/">
+                                Back to home
+                                </Link>
+                            </Button>
                     </div>
                 )
             }

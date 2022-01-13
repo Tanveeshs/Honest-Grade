@@ -3,6 +3,8 @@ import Progress from './Progress';
 import Question from './Question';
 import Answers from './Answers';
 import QuizContext from '../context/quizContext';
+import {Button} from '@material-ui/core'
+import { Link } from "react-router-dom";
 
 import {
     SET_CURRENT_ANSWER,
@@ -35,9 +37,13 @@ export function Quiz(props) {
     const [state, dispatch] = useReducer(quizReducer, initialState)
     let {first,questions, currentQuestion, currentAnswer, answers, error, end_quiz_flag,numberQuestions1 } = state;
     if(end_quiz_flag){
-        return (<div>
-
-            TEST        END
+        return (<div style={{flex:'1 1 auto'}}>
+            <h1>TEST END</h1>
+            <Button color='default' variant='contained'>
+                <Link to="/">
+                Back to home
+                </Link>
+            </Button>
         </div>)
     }
 
@@ -109,11 +115,9 @@ export function Quiz(props) {
             await dispatch({type:ADD_QUESTIONS,questions:resp.data.questions});
             await dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: '' })
             if (currentQuestion < numberQuestions) {
-                console.log("OR HERE??")
                 await dispatch({ type: SET_CURRENT_QUESTION, currentQuestion: currentQuestion + 1 }) //setCurrentQuestion(currentQuestion + 1);
                 return;
             }else {
-                console.log("IS IT HERE?")
                 await dispatch({type:'END_QUIZ', end_quiz_flag:true})
                 try{
                     await axios.post('https://honestgrade.herokuapp.com/assessment/answerQuestion',{

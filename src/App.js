@@ -7,6 +7,9 @@ import {
 } from "react-router-dom";
 import QuizStart from "./components/QuizStart";
 import SubjectiveStart from "./components/SubjectiveStart";
+import DashboardStart from "./components/DashboardStart";
+import Tests from "./components/Tests";
+import Login from './components/login.component'
 
 export default function App() {
     return (
@@ -28,6 +31,15 @@ export default function App() {
                     </Route>
                     <Route path="/subjective">
                         <SubjectiveStart/>
+                    </Route>
+                    <Route path="/" exact>
+                        <DashboardStart/>
+                    </Route>
+                    <Route path="/tests">
+                        <Tests/>
+                    </Route>
+                    <Route path="/login" exact>
+                        <Login/>
                     </Route>
                 </Switch>
             </div>
