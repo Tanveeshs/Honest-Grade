@@ -35,6 +35,9 @@ const useStyles = makeStyles((theme) => ({
 function DashboardStart() {
   const classes = useStyles();
   const [loggedIn, setLoggedIn] = useState(false);
+  let userDetails = JSON.parse(localStorage.getItem("user_details"));
+  console.log("USER DETAILS",userDetails);
+
   useEffect(() =>{
       //make your login request here
   })
@@ -72,8 +75,8 @@ function DashboardStart() {
         <h3 style={{margin:'10px'}}>Please login with your student ID to begin your tests</h3>
     </div>
     ):(<div style={{marginTop:'10%'}}>
-        <h2 style={{margin:'10px'}}>Welcome Rishabh!</h2>
-        <h3 style={{margin:'10px'}}>Student ID: DJC3248 </h3>
+        <h2 style={{margin:'10px'}}>Welcome {(userDetails!==null)?userDetails.name:"Rishabh"}!</h2>
+        <h3 style={{margin:'10px'}}>Student ID: {(userDetails!==null)?userDetails.userID:"DJSCE123"} </h3>
         <h4 style={{margin:'10px'}}>You have 2 tests pending</h4>
         <Button color='default' variant='contained'>
         <Link to="/tests">

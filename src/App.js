@@ -9,7 +9,8 @@ import QuizStart from "./components/QuizStart";
 import SubjectiveStart from "./components/SubjectiveStart";
 import DashboardStart from "./components/DashboardStart";
 import Tests from "./components/Tests";
-import Login from './components/login.component'
+import Login from './components/Login'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function App() {
     return (
@@ -40,6 +41,10 @@ export default function App() {
                     </Route>
                     <Route path="/login" exact>
                         <Login/>
+                    </Route>
+
+                    <Route path="/home" exact>
+                        <DashboardStart/>
                     </Route>
                 </Switch>
             </div>

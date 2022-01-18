@@ -80,3 +80,12 @@ h2 {
   background-color: #ffc107;
   font-weight: bold;
 }
+.App {
+  text-align: center;
+}
+
+.hv-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

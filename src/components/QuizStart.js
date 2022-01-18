@@ -17,6 +17,7 @@ function QuizStart() {
                 "examId": "616f12e40f50d70016d32c30"
             }
         ).then(resp=>{
+            console.log(resp.data);
             setQuestions([...resp.data.questions]);
             setAssessment(resp.data.assessmentId);
             setExam(resp.data.examId);
