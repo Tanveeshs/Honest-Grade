@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
   },
   link: {
     textDecoration: "none",
+    lineStyle:'none',
     fontWeight:'bold',
     color: "white",
     fontSize: "16px",
@@ -38,14 +39,13 @@ export default function Navbar() {
   })
   return (
       <>
-      <AppBar position="static">
+      <AppBar position="static" style={{backgroundColor:'black'}}>
       <CssBaseline />
       <Toolbar>
         <Typography variant="h5" className={classes.logo}>
-          Student Test Portal
         </Typography>
           <div className={classes.navlinks}>
-            <Link to="/" className={classes.link}>
+            <Link to="/" className={classes.link} >
               Home
             </Link>
             {loggedIn === false ? (

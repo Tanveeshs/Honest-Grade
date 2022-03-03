@@ -7,11 +7,13 @@ import {
   makeStyles,
   Button
 } from "@material-ui/core";
+import {Navigation} from 'react-minimal-side-navigation';
+import 'react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css';
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   navlinks: {
-    marginLeft: theme.spacing(10),
+    float:'right',
     display: "flex",
   },
  logo: {
@@ -24,7 +26,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "16px",
     "&:hover": {
       color: "white",
-      borderBottom: "1px solid white",
     },
     '&:active': {
         color:'white'
@@ -34,37 +35,72 @@ const useStyles = makeStyles((theme) => ({
 
 function DashboardStart() {
   const classes = useStyles();
+  const [userDetails, setUser] = useState({});
+  const sidebarStyles = {
+    width:'25vw',
+    height:'100%',
+    position:'absolute',
+    zIndex:'10',
+    backgroundColor:'white',
+    boxShadow: '0 0 2px lightgray',
+    fontFamily: 'Noto Serif Display',
+    border:'0.5px solid lightgray'
+  }
+  const sidebarContent = {
+    height:'40%',
+  }
+  const sidebarHeader = {
+    marginTop:'5%',
+    display:'flex',
+    justifyContent:'center',
+  }
   const [loggedIn, setLoggedIn] = useState(false);
-  let userDetails = JSON.parse(localStorage.getItem("user_details"));
-  console.log("USER DETAILS",userDetails);
 
-  useEffect(() =>{
-      //make your login request here
-  })
   return (
       <>
-      <AppBar position="static">
+      <div style={sidebarStyles}>
+        <div style={sidebarContent}>
+          <div style={sidebarHeader}>
+            <h3 style={{fontWeight:'bold'}}>
+            Honest Grade
+            </h3>
+          </div>
+          <div style={{marginTop:'45%',marginLeft:'8%'}}>
+          <h5>Tests</h5>
+          <h5>Assignments</h5>
+          <h5>Account</h5>
+          <h5>Other</h5>
+          </div>
+        </div>
+      </div>
+      <AppBar position="static" style={{backgroundColor:'black'}}>
       <CssBaseline />
       <Toolbar>
-        <Typography variant="h5" className={classes.logo}>
-          Student Test Portal
-        </Typography>
           <div className={classes.navlinks}>
-            <Link to="/" className={classes.link} style={{marginRight:'50px'}}>
+            
+            {loggedIn ? 
+              (
+                <div>
+                  <Link to="/" className={classes.link} style={{marginRight:'50px'}}>
               Home
             </Link>
-            {loggedIn === false ? (
+                <Link to="/tests" className={classes.link}>
+                  Your tests
+                </Link>
+                </div>
+                
+            ):
+            (
                 <div>
+                  <Link to="/" className={classes.link} style={{marginRight:'50px'}}>
+              Home
+            </Link>
               <Link to="/login" className={classes.link} >
                 Login
               </Link>
               </div>
-            ):
-            (
-            <Link to="/tests" className={classes.link}>
-              Your tests
-            </Link>
-            )}
+            )
+            }
             
           </div>
       </Toolbar>

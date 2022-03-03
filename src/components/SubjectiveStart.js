@@ -2,8 +2,13 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import SubjectiveQuiz from "./SubjectiveQuiz";
 import bg2 from '../assets/bg2.png'
+import Loader from "react-loader-spinner";
+
+
 
 export function SubjectiveStart(){
+    let userDetails = JSON.parse(localStorage.getItem("user_details"));
+    console.log('USER',userDetails)
     const [questions,setQuestions] = useState([]);
     const [assessmentId,setAssessment] = useState();
     const [numberQuestions,setNumberQuestions] = useState(0);
