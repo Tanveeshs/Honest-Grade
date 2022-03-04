@@ -42,7 +42,7 @@ export function SubjectiveStart(){
         alignContent: 'center',
     }
     useEffect(() => {
-        setInterval(checkFocus, 200, [tabWarning, warningCount])
+        // setInterval(checkFocus, 200, [tabWarning, warningCount])
         axios.post('https://honestgrade.herokuapp.com/assessment/startSubjectiveAssessment', {
             studentId: "61366028e87ffc38b8f8f937",
             examId: "618900ea55116c0804ad761e"

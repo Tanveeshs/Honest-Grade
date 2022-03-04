@@ -10,6 +10,7 @@ import SubjectiveStart from "./components/SubjectiveStart";
 import DashboardStart from "./components/DashboardStart";
 import Tests from "./components/Tests";
 import Login from './components/Login'
+import Account from './components/Account'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function App() {
@@ -42,7 +43,10 @@ export default function App() {
                     <Route path="/login" exact>
                         <Login/>
                     </Route>
-
+                    <Route path="/account" exact>
+                        <Account/>
+                    </Route>
+                    
                     <Route path="/home" exact>
                         <DashboardStart/>
                     </Route>
