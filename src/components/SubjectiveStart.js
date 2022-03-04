@@ -13,6 +13,9 @@ export function SubjectiveStart(){
     const [assessmentId,setAssessment] = useState();
     const [numberQuestions,setNumberQuestions] = useState(0);
     const [disp,setDisp] = useState(false);
+    const [tabWarning, setTabWarning] = useState(false);
+    const [warningCount, setWarningCount] = useState(0);
+
     const startButton = {
         padding: '7px',
         display: 'flex',
