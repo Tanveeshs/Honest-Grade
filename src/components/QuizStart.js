@@ -4,7 +4,7 @@ import {Quiz} from './Quiz'
 import axios from "axios";
 import '../App.css';
 import Webcam from "react-webcam";
-import SpeechRecognition,{useSpeechRecognition} from "react-speech-recognition";
+import SpeechRecognition, {useSpeechRecognition} from "react-speech-recognition";
 
 const videoConstraints = {
     width: 1280,
@@ -27,7 +27,6 @@ function QuizStart() {
         () => {
             if (webcamRef && webcamRef.current) {
                 const imageSrc = webcamRef.current.getScreenshot();
-
                 // axios.post('http://localhost:5000/proctor', {
                 //     file: imageSrc
                 // }).then((resp) => {
@@ -66,28 +65,32 @@ function QuizStart() {
             setNumberQuestions(resp.data.numberQuestions);
             alert("Done Loading")
         })
-        setInterval(function () {
-            capture()
-        }, 10000)
+        //Recursive task of 10 seconds for image frame
+        setInterval(capture, 10000)
         SpeechRecognition.startListening()
+        //Recursive task of 20 seconds for voice detection
+        setInterval(viewTranscript, 20000)
     }, [])
+
     function startTest() {
         setDisp(true)
     }
-    function viewTranscript(){
+
+    async function viewTranscript() {
         SpeechRecognition.stopListening()
-        console.log("TRANSCRIPT",transcript)
+        console.log("TRANSCRIPT", transcript)
         resetTranscript()
         SpeechRecognition.startListening()
         let words = transcript.split(" ");
-        if(words.length>0){
-            axios.post('https://honestgrade.herokuapp.com/violations/add',{
-                assessmentId:assessmentId,
-                notes:transcript,
-                violationType:2
+        if (words.length > 0) {
+            await axios.post('https://honestgrade.herokuapp.com/violations/add', {
+                assessmentId: assessmentId,
+                notes: transcript,
+                violationType: 2
             })
         }
     }
+
     function quizDetails() {
         return (
             <div>
@@ -105,22 +108,6 @@ function QuizStart() {
         )
     }
 
-    // if(!disp){
-    //     return (
-    //         <div>
-    //             {quizDetails()}
-    //             <Webcam
-    //                 audio={false}
-    //                 height={20}
-    //                 ref={webcamRef}
-    //                 screenshotFormat="image/jpeg"
-    //                 width={10}
-    //                 videoConstraints={videoConstraints}
-    //             />
-    //             <Quiz disp={disp} questions={questions} assessmentId={assessmentId} examId={examId}  numberQuestions={numberQuestions}></Quiz>
-    //         </div>
-    //     );
-    // }else{
     return (
         <div>
             {!disp ? quizDetails() : ""}
@@ -133,7 +120,7 @@ function QuizStart() {
                 videoConstraints={videoConstraints}
             />
             <Quiz disp={disp} questions={questions} assessmentId={assessmentId} examId={examId}
-                  numberQuestions={numberQuestions}></Quiz>
+                  numberQuestions={numberQuestions}/>
         </div>
     );
     // }
