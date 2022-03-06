@@ -7,8 +7,7 @@ import {
   makeStyles,
   Button
 } from "@material-ui/core";
-import {Navigation} from 'react-minimal-side-navigation';
-import 'react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css';
+import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -32,29 +31,47 @@ const useStyles = makeStyles((theme) => ({
     }
   },
 }));
+//styles
+const sidebarStyles = {
+  width:'25vw',
+  height:'100%',
+  position:'absolute',
+  zIndex:'10',
+  backgroundColor:'white',
+  boxShadow: '0 0 2px lightgray',
+  fontFamily: 'Noto Serif Display',
+  border:'0.5px solid lightgray'
+}
+const sidebarContent = {
+  height:'40%',
+}
+const sidebarHeader = {
+  marginTop:'5%',
+  display:'flex',
+  justifyContent:'center',
+}
+const sidebarItem = {
+  marginTop:'2%',
+  cursor:'pointer',
+}
 
 function DashboardStart() {
   const classes = useStyles();
   const [userDetails, setUser] = useState({});
-  const sidebarStyles = {
-    width:'25vw',
-    height:'100%',
-    position:'absolute',
-    zIndex:'10',
-    backgroundColor:'white',
-    boxShadow: '0 0 2px lightgray',
-    fontFamily: 'Noto Serif Display',
-    border:'0.5px solid lightgray'
-  }
-  const sidebarContent = {
-    height:'40%',
-  }
-  const sidebarHeader = {
-    marginTop:'5%',
-    display:'flex',
-    justifyContent:'center',
-  }
   const [loggedIn, setLoggedIn] = useState(false);
+
+  //functions
+  const nav = useHistory()
+
+  const takeToTests = () => {
+    nav.replace('/tests')
+  }
+  const takeToAssn = () => {
+    nav.replace('/assn')
+  }
+  const takeToAcc = () => {
+    nav.replace('/account')
+  }
 
   return (
       <>
@@ -66,10 +83,10 @@ function DashboardStart() {
             </h3>
           </div>
           <div style={{marginTop:'45%',marginLeft:'8%'}}>
-          <h5>Tests</h5>
-          <h5>Assignments</h5>
-          <h5>Account</h5>
-          <h5>Other</h5>
+          <h5 onClick={takeToTests} style={sidebarItem}>Tests</h5>
+          <h5 onClick={takeToAssn} style={sidebarItem}>Assignments</h5>
+          <h5 onClick={takeToAcc} style={sidebarItem}>Account</h5>
+          <h5 style={sidebarItem}>Other</h5>
           </div>
         </div>
       </div>

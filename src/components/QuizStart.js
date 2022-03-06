@@ -24,7 +24,6 @@ function QuizStart() {
     const [examId,setExam] = useState();
     const [numberQuestions,setNumberQuestions] = useState(0);
     const [disp,setDisp] = useState(false);
-    const [student_details,setStudentDetails] = useState({})
     const [startTestFlag,setStartTestFlag] = useState(false)
 
     const [tabWarning, setTabWarning] = useState(false);
@@ -46,7 +45,7 @@ function QuizStart() {
             setNumberQuestions(resp.data.numberQuestions);
             setStartTestFlag(true)
         })
-    },[])
+    },[tabSwitched])
 
     function checkFocus() {
     console.log(warningCount)
@@ -55,9 +54,7 @@ function QuizStart() {
                 console.log("Caught you switching")
                 setTabSwitched(true)
                 let temp = warningCount
-                setWarningCount((e)=>{
-                    return e + 1
-                })
+                setWarningCount(temp+1)
         //     Send request get warning count,
             }
         
