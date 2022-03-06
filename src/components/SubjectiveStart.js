@@ -1,4 +1,4 @@
-import React, {useEffect, useState,useRef,useCallback} from "react";
+import React, {useEffect, useState, useRef, useCallback} from "react";
 import axios from "axios";
 import SubjectiveQuiz from "./SubjectiveQuiz";
 import {useLocation} from 'react-router-dom'
@@ -6,14 +6,65 @@ import blue_bg from '../assets/blue_bg.jpg'
 import Loader from "react-loader-spinner";
 import Webcam from "react-webcam";
 import SpeechRecognition, {useSpeechRecognition} from "react-speech-recognition";
+import Modal from "react-modal";
 
+const customStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+    },
+};
 const videoConstraints = {
     width: 1280,
     height: 720,
     facingMode: "user"
 };
 
-export function SubjectiveStart(){
+const startButton = {
+    padding: '7px',
+    display: 'flex',
+    width: '200px',
+    justifyContent: 'center',
+    color: 'white',
+    alignContent: 'center',
+    backgroundColor: 'orange',
+    border: '1px solid white',
+    borderRadius: '5px',
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+    fontSize: '16px',
+    marginTop: '2%'
+}
+const main = {
+    display: 'flex',
+    padding: '1%',
+    backgroundImage: 'url(' + blue_bg + ')',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    width: '100vw',
+    height: '100vh'
+}
+const container = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignContent: 'center',
+}
+const footnoteStyles = {
+    border: '0.5px solid white',
+    padding: '2%',
+    display: 'flex',
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
+    borderRadius: '10px'
+}
+
+export function SubjectiveStart() {
+    Modal.setAppElement('#root')
+    let subtitle;
     let userDetails = JSON.parse(localStorage.getItem("user_details"));
 
     //grabbing the examID from the URL
@@ -21,31 +72,47 @@ export function SubjectiveStart(){
     const curr_url = loc.pathname
     let test_details_string = curr_url.split('/')[2]
     const test_details = JSON.parse(test_details_string)
-    console.log('TEST DETAILS',test_details)
+    console.log('TEST DETAILS', test_details)
 
-    console.log('USER',userDetails)
-    const [questions,setQuestions] = useState([]);
-    const [assessmentId,setAssessment] = useState();
-    const [numberQuestions,setNumberQuestions] = useState(0);
-    const [disp,setDisp] = useState(false);
-    const [tabWarning, setTabWarning] = useState(false);
+    console.log('USER', userDetails)
+    const [questions, setQuestions] = useState([]);
+    const [assessmentId, setAssessment] = useState();
+    const [numberQuestions, setNumberQuestions] = useState(0);
+    const [disp, setDisp] = useState(false);
     const [warningCount, setWarningCount] = useState(0);
-    const [tabSwitched,setTabSwitched] = useState(false)
-    
+    const [modalIsOpen, setIsOpen] = React.useState(false);
+
+    function openModal() {
+        setIsOpen(true);
+    }
+
+    function afterOpenModal() {
+        subtitle.style.color = '#f00';
+    }
+
+    function closeModal() {
+        setIsOpen(false);
+        axios.post('https://honestgrade.herokuapp.com/violations/add', {
+            assessmentId: assessmentId,
+            violationType: 0,
+            notes: "Caught tab switching"
+        })
+    }
+
     //Proctoring camera
     const webcamRef = useRef(null);
     const capture = useCallback(
         () => {
             if (webcamRef && webcamRef.current) {
                 const imageSrc = webcamRef.current.getScreenshot();
-                // axios.post('http://localhost:5000/proctor', {
-                //     file: imageSrc
-                // }).then((resp) => {
-                //     console.log("got resp", resp.data)
-                //
-                // }).catch(e => {
-                //     console.log("ERROR")
-                // })
+                axios.post('http://localhost:5000/proctor', {
+                    file: imageSrc
+                }).then((resp) => {
+                    console.log("got resp", resp.data)
+
+                }).catch(e => {
+                    console.log("ERROR")
+                })
             } else {
                 console.log("WEBCAM NOT THERE")
             }
@@ -54,52 +121,12 @@ export function SubjectiveStart(){
     );
     const {
         transcript,
-        listening,
         resetTranscript,
         browserSupportsSpeechRecognition
     } = useSpeechRecognition();
 
     if (!browserSupportsSpeechRecognition) {
         console.log('Browser doesn\'t support speech recognition.')
-    }
-
-
-    const startButton = {
-        padding: '7px',
-        display: 'flex',
-        width: '200px',
-        justifyContent: 'center',
-        color: 'white',
-        alignContent: 'center',
-        backgroundColor: 'orange',
-        border: '1px solid white',
-        borderRadius: '5px',
-        textTransform: 'uppercase',
-        fontWeight: 'bold',
-        fontSize: '16px',
-        marginTop:'2%'
-    }
-    const main = {
-        display: 'flex',
-        padding: '1%',
-        backgroundImage: 'url(' + blue_bg + ')',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        width: '100vw',
-        height: '100vh'
-    }
-    const container = {
-        display: 'flex',
-        flexDirection: 'column',
-        alignContent: 'center',
-    }
-    const footnoteStyles = {
-        border:'0.5px solid white',
-        padding:'2%',
-        display:'flex',
-        justifyContent:'flex-start',
-        flexDirection:'column',
-        borderRadius:'10px'
     }
     useEffect(() => {
         // setInterval(checkFocus, 200, [tabWarning, warningCount])
@@ -118,6 +145,11 @@ export function SubjectiveStart(){
         SpeechRecognition.startListening()
         //Recursive task of 20 seconds for voice detection
         setInterval(viewTranscript, 20000)
+        setInterval(() => {
+            if (document.hasFocus() === false) {
+                openModal()
+            }
+        }, 200)
     }, [])
 
     async function viewTranscript() {
@@ -135,19 +167,6 @@ export function SubjectiveStart(){
         }
     }
 
-    function checkFocus() {
-        if (document.hasFocus() === false) {
-            if(tabSwitched === false){
-                console.log("Caught you switching")
-                setTabSwitched(true)
-                setWarningCount(warningCount+1)
-        //     Send request get warning count,
-                
-            }
-        //     if count is 5 evict
-        }
-    }
-
     function onClick() {
         setDisp(true)
     }
@@ -155,17 +174,27 @@ export function SubjectiveStart(){
     if (!disp) {
         return (
             <div style={main}>
+                <Modal
+                    isOpen={modalIsOpen}
+                    onAfterOpen={afterOpenModal}
+                    onRequestClose={closeModal}
+                    style={customStyles}
+                    contentLabel="Warning"
+                >
+                    <h2 ref={(_subtitle) => (subtitle = _subtitle)}>You are caught switching tabs!This is a warning</h2>
+                    <button onClick={closeModal}>close</button>
+                </Modal>
                 <div style={container}>
                     <div name='footnote' style={footnoteStyles}>
                         <p>This test is proctored. Please do not leave or minimize this page at any point of time.
-                            <span style={{fontWeight:'bold'}}> Any changes that take place will lead to test being cancelled</span>
+                            <span style={{fontWeight: 'bold'}}> Any changes that take place will lead to test being cancelled</span>
                         </p>
                         <p style={{fontSize: '22px'}}>Welcome to your Test!</p>
                         <p style={{fontSize: '18px'}}>UserID: {userDetails.userID}</p>
-                    <p style={{fontSize: '18px'}}>Subject: {test_details.subject}</p>
+                        <p style={{fontSize: '18px'}}>Subject: {test_details.subject}</p>
                     </div>
-                    
-                    
+
+
                     <button onClick={onClick} style={startButton}>Start</button>
                     <SubjectiveQuiz disp={disp} questions={questions}
                                     assessmentId={assessmentId} numberQuestions={numberQuestions}>
@@ -176,6 +205,16 @@ export function SubjectiveStart(){
     } else {
         return (
             <div>
+                <Modal
+                    isOpen={modalIsOpen}
+                    onAfterOpen={afterOpenModal}
+                    onRequestClose={closeModal}
+                    style={customStyles}
+                    contentLabel="Warning"
+                >
+                    <h2 ref={(_subtitle) => (subtitle = _subtitle)}>You are caught switching tabs!This is a warning</h2>
+                    <button onClick={closeModal}>close</button>
+                </Modal>
                 <SubjectiveQuiz disp={disp} questions={questions} assessmentId={assessmentId}
                                 numberQuestions={numberQuestions}></SubjectiveQuiz>
             </div>
