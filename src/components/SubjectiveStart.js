@@ -1,4 +1,4 @@
-import React, {useEffect, useState,useRef,useCallback} from "react";
+import React, {useEffect, useState, useRef, useCallback} from "react";
 import axios from "axios";
 import SubjectiveQuiz from "./SubjectiveQuiz";
 import {useLocation} from 'react-router-dom'
@@ -13,7 +13,7 @@ const videoConstraints = {
     facingMode: "user"
 };
 
-export function SubjectiveStart(){
+export function SubjectiveStart() {
     let userDetails = JSON.parse(localStorage.getItem("user_details"));
 
     //grabbing the examID from the URL
@@ -21,17 +21,15 @@ export function SubjectiveStart(){
     const curr_url = loc.pathname
     let test_details_string = curr_url.split('/')[2]
     const test_details = JSON.parse(test_details_string)
-    console.log('TEST DETAILS',test_details)
+    console.log('TEST DETAILS', test_details)
 
-    console.log('USER',userDetails)
-    const [questions,setQuestions] = useState([]);
-    const [assessmentId,setAssessment] = useState();
-    const [numberQuestions,setNumberQuestions] = useState(0);
-    const [disp,setDisp] = useState(false);
-    const [tabWarning, setTabWarning] = useState(false);
+    console.log('USER', userDetails)
+    const [questions, setQuestions] = useState([]);
+    const [assessmentId, setAssessment] = useState();
+    const [numberQuestions, setNumberQuestions] = useState(0);
+    const [disp, setDisp] = useState(false);
     const [warningCount, setWarningCount] = useState(0);
-    const [tabSwitched,setTabSwitched] = useState(false)
-    
+
     //Proctoring camera
     const webcamRef = useRef(null);
     const capture = useCallback(
@@ -77,7 +75,7 @@ export function SubjectiveStart(){
         textTransform: 'uppercase',
         fontWeight: 'bold',
         fontSize: '16px',
-        marginTop:'2%'
+        marginTop: '2%'
     }
     const main = {
         display: 'flex',
@@ -94,12 +92,12 @@ export function SubjectiveStart(){
         alignContent: 'center',
     }
     const footnoteStyles = {
-        border:'0.5px solid white',
-        padding:'2%',
-        display:'flex',
-        justifyContent:'flex-start',
-        flexDirection:'column',
-        borderRadius:'10px'
+        border: '0.5px solid white',
+        padding: '2%',
+        display: 'flex',
+        justifyContent: 'flex-start',
+        flexDirection: 'column',
+        borderRadius: '10px'
     }
     useEffect(() => {
         // setInterval(checkFocus, 200, [tabWarning, warningCount])
@@ -114,10 +112,11 @@ export function SubjectiveStart(){
                 setNumberQuestions(resp.data.questions.length);
             })
         //Recursive task of 10 seconds for image frame
-        setInterval(capture, 10000)
+        // setInterval(capture, 10000)
         SpeechRecognition.startListening()
         //Recursive task of 20 seconds for voice detection
         setInterval(viewTranscript, 20000)
+        setInterval(checkFocus, 200)
     }, [])
 
     async function viewTranscript() {
@@ -137,14 +136,11 @@ export function SubjectiveStart(){
 
     function checkFocus() {
         if (document.hasFocus() === false) {
-            if(tabSwitched === false){
-                console.log("Caught you switching")
-                setTabSwitched(true)
-                setWarningCount(warningCount+1)
-        //     Send request get warning count,
-                
-            }
-        //     if count is 5 evict
+            console.log("Caught you switching")
+            let a  =warningCount +1;
+            console.log(a)
+            setWarningCount(warningCount + 1)
+            console.log(warningCount)
         }
     }
 
@@ -158,14 +154,14 @@ export function SubjectiveStart(){
                 <div style={container}>
                     <div name='footnote' style={footnoteStyles}>
                         <p>This test is proctored. Please do not leave or minimize this page at any point of time.
-                            <span style={{fontWeight:'bold'}}> Any changes that take place will lead to test being cancelled</span>
+                            <span style={{fontWeight: 'bold'}}> Any changes that take place will lead to test being cancelled</span>
                         </p>
                         <p style={{fontSize: '22px'}}>Welcome to your Test!</p>
                         <p style={{fontSize: '18px'}}>UserID: {userDetails.userID}</p>
-                    <p style={{fontSize: '18px'}}>Subject: {test_details.subject}</p>
+                        <p style={{fontSize: '18px'}}>Subject: {test_details.subject}</p>
                     </div>
-                    
-                    
+
+
                     <button onClick={onClick} style={startButton}>Start</button>
                     <SubjectiveQuiz disp={disp} questions={questions}
                                     assessmentId={assessmentId} numberQuestions={numberQuestions}>
