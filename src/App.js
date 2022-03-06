@@ -29,28 +29,12 @@ export default function App() {
                 {/*    </ul>*/}
                 {/*</nav>*/}
                 <Switch>
-                    <PrivateRoute exact path="/objective/:id" exact>
-                        <QuizStart/>
-                    </PrivateRoute>
-                    <PrivateRoute exact path="/subjective/:id">
-                        <SubjectiveStart/>
-                    </PrivateRoute>
-                    <PrivateRoute exact path="/">
-                        <DashboardStart/>
-                    </PrivateRoute>
-                    <PrivateRoute exact path="/tests">
-                        <Tests/>
-                    </PrivateRoute>
-                    <Route exact path="/login">
-                        <Login/>
-                    </Route>
-                    <PrivateRoute exact path="/account">
-                        <Account/>
-                    </PrivateRoute>
-                    
-                    <PrivateRoute exact path="/home">
-                        <DashboardStart/>
-                    </PrivateRoute>
+                    <PrivateRoute exact path="/objective/:id" component={QuizStart}/>
+                    <PrivateRoute exact path="/subjective/:id" component={SubjectiveStart}/>
+                    <PrivateRoute exact path="/" component={DashboardStart}/>
+                    <PrivateRoute exact path="/tests" component={Tests}/>
+                    <Route exact path="/login" component={Login}/>
+                    <PrivateRoute exact path="/account" component={Account}/>
                 </Switch>
             </div>
         </Router>

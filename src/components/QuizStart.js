@@ -1,158 +1,102 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button} from '@material-ui/core'
-import {Quiz} from './Quiz'
 import {useLocation} from 'react-router-dom'
+import {Quiz} from './Quiz'
 import axios from "axios";
 import '../App.css';
-import Webcam from "react-webcam";
-import SpeechRecognition, {useSpeechRecognition} from "react-speech-recognition";
-import blue_bg from '../assets/blue_bg.jpg'
 
+function QuizStart() {
 
-const videoConstraints = {
-    width: 1280,
-    height: 720,
-    facingMode: "user"
-};
+    const switchesAllowed = 10
+    //student details
+    let userDetails = JSON.parse(localStorage.getItem("user_details"));
 
-function QuizStart(props) {
-    
     //grabbing the examID from the URL
     const loc = useLocation()
     const curr_url = loc.pathname
     let test_details_string = curr_url.split('/')[2]
     const test_details = JSON.parse(test_details_string)
-
-    //grab the student details
-    const student_details = JSON.parse(localStorage.getItem('user_details'))
+    console.log('TEST DETAILS',test_details)
 
 
+    const [questions,setQuestions] = useState([]);
+    const [assessmentId,setAssessment] = useState();
+    const [examId,setExam] = useState();
+    const [numberQuestions,setNumberQuestions] = useState(0);
+    const [disp,setDisp] = useState(false);
+    const [student_details,setStudentDetails] = useState({})
+    const [startTestFlag,setStartTestFlag] = useState(false)
 
-    const [questions, setQuestions] = useState([]);
-    const [assessmentId, setAssessment] = useState();
-    const [examId, setExam] = useState();
-    const [numberQuestions, setNumberQuestions] = useState(0);
-    const [disp, setDisp] = useState(false);
-    // const [student_details, setStudentDetails] = useState({});
+    const [tabWarning, setTabWarning] = useState(false);
+    const [warningCount, setWarningCount] = useState(0);
+    const [tabSwitched,setTabSwitched] = useState(false)
 
 
-    //Proctoring camera
-    const webcamRef = useRef(null);
-    const capture = useCallback(
-        () => {
-            if (webcamRef && webcamRef.current) {
-                const imageSrc = webcamRef.current.getScreenshot();
-                // axios.post('http://localhost:5000/proctor', {
-                //     file: imageSrc
-                // }).then((resp) => {
-                //     console.log("got resp", resp.data)
-                //
-                // }).catch(e => {
-                //     console.log("ERROR")
-                // })
-            } else {
-                console.log("WEBCAM NOT THERE")
-            }
-        },
-        [webcamRef]
-    );
-    const {
-        transcript,
-        listening,
-        resetTranscript,
-        browserSupportsSpeechRecognition
-    } = useSpeechRecognition();
-
-    if (!browserSupportsSpeechRecognition) {
-        console.log('Browser doesn\'t support speech recognition.')
-    }
-
-    useEffect(() => {
+    useEffect(()=>{
+        setInterval(checkFocus, 200)
         axios.post('https://honestgrade.herokuapp.com/assessment/start', {
-                "studentId": student_details._id,
+                "studentId": userDetails._id,
                 "examId": test_details.test_id
             }
-        ).then(resp => {
+        ).then(resp=>{
             console.log(resp.data);
             setQuestions([...resp.data.questions]);
             setAssessment(resp.data.assessmentId);
             setExam(resp.data.examId);
             setNumberQuestions(resp.data.numberQuestions);
-            alert("Done Loading")
+            setStartTestFlag(true)
         })
-        //Recursive task of 10 seconds for image frame
-        setInterval(capture, 10000)
-        SpeechRecognition.startListening()
-        //Recursive task of 20 seconds for voice detection
-        setInterval(viewTranscript, 20000)
-    }, [])
+    },[])
 
-    function startTest() {
+    function checkFocus() {
+    console.log(warningCount)
+
+        if (document.hasFocus() === false) {
+                console.log("Caught you switching")
+                setTabSwitched(true)
+                let temp = warningCount
+                setWarningCount((e)=>{
+                    return e + 1
+                })
+        //     Send request get warning count,
+            }
+        
+
+    }
+
+
+    function startTest(){
         setDisp(true)
     }
-
-    async function viewTranscript() {
-        SpeechRecognition.stopListening()
-        console.log("TRANSCRIPT", transcript)
-        resetTranscript()
-        SpeechRecognition.startListening()
-        let words = transcript.split(" ");
-        if (words.length > 0) {
-            await axios.post('https://honestgrade.herokuapp.com/violations/add', {
-                assessmentId: assessmentId,
-                notes: transcript,
-                violationType: 2
-            })
-        }
-    }
-
-    // styles
-    const main = {
-        display: 'flex',
-        padding: '1%',
-        backgroundImage: 'url(' + blue_bg + ')',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        width: '100vw',
-        height: '100vh'
-    }
-
-    function quizDetails() {
+    function quizDetails(){
         return (
-            <>
-                <div style={main}>
-                    <div style={{display:'flex',flexDirection:'column'}}>
-                        <h2>Review your details</h2>
-                    <ul>
-                        <li>Student ID: {student_details.userID}</li>
-                        <li>Subject Name: {test_details.subject}  </li>
-                    </ul>
-                    <Button variant='outlined' color="primary" style={{marginLeft: '5%'}}
-                            onClick={startTest}>Start Quiz</Button>
-                    <Button variant='outlined' color="primary" style={{marginLeft: '5%'}}
-                            onClick={viewTranscript}>View Transcript</Button>
-                    </div>
-                </div>
-            </>
+            <div>
+                <h2>Review your details</h2>
+                <ul>
+                    <li>Student ID: {userDetails.userID}</li>
+                    <li>Subject Name: {test_details.subject}</li>
+                </ul>
+                <Button variant='outlined' color="primary" disabled={!startTestFlag} style={{marginLeft:'5%'}}
+                onClick={startTest}>Start Quiz</Button>
+            </div>
         )
     }
+    if(!disp){
+        return (
+            <div>
+                {quizDetails()}
 
-    return (
-        <div>
-            {!disp ? quizDetails() : ""}
-            <Webcam
-                audio={false}
-                height={1920}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                width={720}
-                videoConstraints={videoConstraints}
-            />
-            <Quiz disp={disp} questions={questions} assessmentId={assessmentId} examId={examId}
-                  numberQuestions={numberQuestions}/>
-        </div>
-    );
-    // }
+                <Quiz disp={disp} questions={questions} assessmentId={assessmentId} examId={examId}  numberQuestions={numberQuestions}></Quiz>
+            </div>
+        );
+    }else{
+
+        return (
+            <div>
+                <Quiz disp={disp} questions={questions} assessmentId={assessmentId} examId={examId} numberQuestions={numberQuestions}></Quiz>
+            </div>
+        );
+    }
 }
 
 export default QuizStart;
