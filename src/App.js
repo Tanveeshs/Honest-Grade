@@ -12,6 +12,7 @@ import Tests from "./components/Tests";
 import Login from './components/Login'
 import Account from './components/Account'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import PrivateRoute from "./utils/PrivateRoute";
 
 export default function App() {
     return (
@@ -28,28 +29,28 @@ export default function App() {
                 {/*    </ul>*/}
                 {/*</nav>*/}
                 <Switch>
-                    <Route path="/objective/:id">
+                    <PrivateRoute exact path="/objective/:id" exact>
                         <QuizStart/>
-                    </Route>
-                    <Route path="/subjective/:id">
+                    </PrivateRoute>
+                    <PrivateRoute exact path="/subjective/:id">
                         <SubjectiveStart/>
-                    </Route>
-                    <Route path="/" exact>
+                    </PrivateRoute>
+                    <PrivateRoute exact path="/">
                         <DashboardStart/>
-                    </Route>
-                    <Route path="/tests">
+                    </PrivateRoute>
+                    <PrivateRoute exact path="/tests">
                         <Tests/>
-                    </Route>
-                    <Route path="/login" exact>
+                    </PrivateRoute>
+                    <Route exact path="/login">
                         <Login/>
                     </Route>
-                    <Route path="/account" exact>
+                    <PrivateRoute exact path="/account">
                         <Account/>
-                    </Route>
+                    </PrivateRoute>
                     
-                    <Route path="/home" exact>
+                    <PrivateRoute exact path="/home">
                         <DashboardStart/>
-                    </Route>
+                    </PrivateRoute>
                 </Switch>
             </div>
         </Router>
