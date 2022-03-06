@@ -21,7 +21,6 @@ const customStyles = {
 function QuizStart() {
     Modal.setAppElement('#root')
     let subtitle;
-    const switchesAllowed = 10
     //student details
     let userDetails = JSON.parse(localStorage.getItem("user_details"));
 
