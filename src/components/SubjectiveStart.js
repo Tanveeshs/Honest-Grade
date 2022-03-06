@@ -1,13 +1,28 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState,useRef,useCallback} from "react";
 import axios from "axios";
 import SubjectiveQuiz from "./SubjectiveQuiz";
-import bg2 from '../assets/bg2.png'
+import {useLocation} from 'react-router-dom'
+import blue_bg from '../assets/blue_bg.jpg'
 import Loader from "react-loader-spinner";
+import Webcam from "react-webcam";
+import SpeechRecognition, {useSpeechRecognition} from "react-speech-recognition";
 
-
+const videoConstraints = {
+    width: 1280,
+    height: 720,
+    facingMode: "user"
+};
 
 export function SubjectiveStart(){
     let userDetails = JSON.parse(localStorage.getItem("user_details"));
+
+    //grabbing the examID from the URL
+    const loc = useLocation()
+    const curr_url = loc.pathname
+    let test_details_string = curr_url.split('/')[2]
+    const test_details = JSON.parse(test_details_string)
+    console.log('TEST DETAILS',test_details)
+
     console.log('USER',userDetails)
     const [questions,setQuestions] = useState([]);
     const [assessmentId,setAssessment] = useState();
@@ -15,6 +30,39 @@ export function SubjectiveStart(){
     const [disp,setDisp] = useState(false);
     const [tabWarning, setTabWarning] = useState(false);
     const [warningCount, setWarningCount] = useState(0);
+    const [tabSwitched,setTabSwitched] = useState(false)
+    
+    //Proctoring camera
+    const webcamRef = useRef(null);
+    const capture = useCallback(
+        () => {
+            if (webcamRef && webcamRef.current) {
+                const imageSrc = webcamRef.current.getScreenshot();
+                // axios.post('http://localhost:5000/proctor', {
+                //     file: imageSrc
+                // }).then((resp) => {
+                //     console.log("got resp", resp.data)
+                //
+                // }).catch(e => {
+                //     console.log("ERROR")
+                // })
+            } else {
+                console.log("WEBCAM NOT THERE")
+            }
+        },
+        [webcamRef]
+    );
+    const {
+        transcript,
+        listening,
+        resetTranscript,
+        browserSupportsSpeechRecognition
+    } = useSpeechRecognition();
+
+    if (!browserSupportsSpeechRecognition) {
+        console.log('Browser doesn\'t support speech recognition.')
+    }
+
 
     const startButton = {
         padding: '7px',
@@ -29,11 +77,12 @@ export function SubjectiveStart(){
         textTransform: 'uppercase',
         fontWeight: 'bold',
         fontSize: '16px',
+        marginTop:'2%'
     }
     const main = {
         display: 'flex',
-        padding: '5%',
-        backgroundImage: 'url(' + bg2 + ')',
+        padding: '1%',
+        backgroundImage: 'url(' + blue_bg + ')',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         width: '100vw',
@@ -44,11 +93,19 @@ export function SubjectiveStart(){
         flexDirection: 'column',
         alignContent: 'center',
     }
+    const footnoteStyles = {
+        border:'0.5px solid white',
+        padding:'2%',
+        display:'flex',
+        justifyContent:'flex-start',
+        flexDirection:'column',
+        borderRadius:'10px'
+    }
     useEffect(() => {
         // setInterval(checkFocus, 200, [tabWarning, warningCount])
         axios.post('https://honestgrade.herokuapp.com/assessment/startSubjectiveAssessment', {
-            studentId: "61366028e87ffc38b8f8f937",
-            examId: "618900ea55116c0804ad761e"
+            studentId: userDetails._id,
+            examId: test_details.test_id
         })
             .then((resp) => {
                 console.log("RESP", resp.data)
@@ -56,12 +113,37 @@ export function SubjectiveStart(){
                 setAssessment(resp.data.assessmentId);
                 setNumberQuestions(resp.data.questions.length);
             })
+        //Recursive task of 10 seconds for image frame
+        setInterval(capture, 10000)
+        SpeechRecognition.startListening()
+        //Recursive task of 20 seconds for voice detection
+        setInterval(viewTranscript, 20000)
     }, [])
+
+    async function viewTranscript() {
+        SpeechRecognition.stopListening()
+        console.log("TRANSCRIPT", transcript)
+        resetTranscript()
+        SpeechRecognition.startListening()
+        let words = transcript.split(" ");
+        if (words.length > 0) {
+            await axios.post('https://honestgrade.herokuapp.com/violations/add', {
+                assessmentId: assessmentId,
+                notes: transcript,
+                violationType: 2
+            })
+        }
+    }
 
     function checkFocus() {
         if (document.hasFocus() === false) {
-            console.log("Caught you switching")
+            if(tabSwitched === false){
+                console.log("Caught you switching")
+                setTabSwitched(true)
+                setWarningCount(warningCount+1)
         //     Send request get warning count,
+                
+            }
         //     if count is 5 evict
         }
     }
@@ -74,9 +156,16 @@ export function SubjectiveStart(){
         return (
             <div style={main}>
                 <div style={container}>
-                    <div>This test is proctored. Please do not leave or minimize this page at any point of time</div>
-                    <div>Any changes that take place will lead to test being cancelled</div>
-                    <h1 style={{fontSize: '48px'}}>Welcome to your Test!</h1>
+                    <div name='footnote' style={footnoteStyles}>
+                        <p>This test is proctored. Please do not leave or minimize this page at any point of time.
+                            <span style={{fontWeight:'bold'}}> Any changes that take place will lead to test being cancelled</span>
+                        </p>
+                        <p style={{fontSize: '22px'}}>Welcome to your Test!</p>
+                        <p style={{fontSize: '18px'}}>UserID: {userDetails.userID}</p>
+                    <p style={{fontSize: '18px'}}>Subject: {test_details.subject}</p>
+                    </div>
+                    
+                    
                     <button onClick={onClick} style={startButton}>Start</button>
                     <SubjectiveQuiz disp={disp} questions={questions}
                                     assessmentId={assessmentId} numberQuestions={numberQuestions}>

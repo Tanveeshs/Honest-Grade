@@ -1,10 +1,13 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Button} from '@material-ui/core'
 import {Quiz} from './Quiz'
+import {useLocation} from 'react-router-dom'
 import axios from "axios";
 import '../App.css';
 import Webcam from "react-webcam";
 import SpeechRecognition, {useSpeechRecognition} from "react-speech-recognition";
+import blue_bg from '../assets/blue_bg.jpg'
+
 
 const videoConstraints = {
     width: 1280,
@@ -12,13 +15,25 @@ const videoConstraints = {
     facingMode: "user"
 };
 
-function QuizStart() {
+function QuizStart(props) {
+    
+    //grabbing the examID from the URL
+    const loc = useLocation()
+    const curr_url = loc.pathname
+    let test_details_string = curr_url.split('/')[2]
+    const test_details = JSON.parse(test_details_string)
+
+    //grab the student details
+    const student_details = JSON.parse(localStorage.getItem('user_details'))
+
+
+
     const [questions, setQuestions] = useState([]);
     const [assessmentId, setAssessment] = useState();
     const [examId, setExam] = useState();
     const [numberQuestions, setNumberQuestions] = useState(0);
     const [disp, setDisp] = useState(false);
-    const [student_details, setStudentDetails] = useState({});
+    // const [student_details, setStudentDetails] = useState({});
 
 
     //Proctoring camera
@@ -54,8 +69,8 @@ function QuizStart() {
 
     useEffect(() => {
         axios.post('https://honestgrade.herokuapp.com/assessment/start', {
-                "studentId": "61366028e87ffc38b8f8f937",
-                "examId": "616f12e40f50d70016d32c30"
+                "studentId": student_details._id,
+                "examId": test_details.test_id
             }
         ).then(resp => {
             console.log(resp.data);
@@ -91,20 +106,34 @@ function QuizStart() {
         }
     }
 
+    // styles
+    const main = {
+        display: 'flex',
+        padding: '1%',
+        backgroundImage: 'url(' + blue_bg + ')',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        width: '100vw',
+        height: '100vh'
+    }
+
     function quizDetails() {
         return (
-            <div>
-                <h2>Review your details</h2>
-                <ul>
-                    <li>Student ID: DJC6384</li>
-                    <li>Subject Name: Computer Science</li>
-                </ul>
-                <Button variant='outlined' color="primary" style={{marginLeft: '5%'}}
-                        onClick={startTest}>Start Quiz</Button>
-                <Button variant='outlined' color="primary" style={{marginLeft: '5%'}}
-                        onClick={viewTranscript}>View Transcript</Button>
-
-            </div>
+            <>
+                <div style={main}>
+                    <div style={{display:'flex',flexDirection:'column'}}>
+                        <h2>Review your details</h2>
+                    <ul>
+                        <li>Student ID: {student_details.userID}</li>
+                        <li>Subject Name: {test_details.subject}  </li>
+                    </ul>
+                    <Button variant='outlined' color="primary" style={{marginLeft: '5%'}}
+                            onClick={startTest}>Start Quiz</Button>
+                    <Button variant='outlined' color="primary" style={{marginLeft: '5%'}}
+                            onClick={viewTranscript}>View Transcript</Button>
+                    </div>
+                </div>
+            </>
         )
     }
 

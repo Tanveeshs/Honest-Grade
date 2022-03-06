@@ -28,10 +28,10 @@ export default function App() {
                 {/*    </ul>*/}
                 {/*</nav>*/}
                 <Switch>
-                    <Route path="/objective">
+                    <Route path="/objective/:id">
                         <QuizStart/>
                     </Route>
-                    <Route path="/subjective">
+                    <Route path="/subjective/:id">
                         <SubjectiveStart/>
                     </Route>
                     <Route path="/" exact>

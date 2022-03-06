@@ -35,41 +35,52 @@ const Tests = () => {
         loadTests()
     }, [])
     const containerStyles = {
-        backgroundColor:'white'
+        backgroundColor:'white',
+        margin:'5%'
     }
     const nav = useHistory()
-    const clickSubjective = ()=>{
-            nav.replace('/subjective')
+    const clickSubjective = (id)=>{
+            nav.replace(`/subjective/${id}`)
     }
-    const clickObjective = () => {
-        nav.replace('/objective')
+    const clickObjective = (id) => {
+        //change to objective later
+        nav.replace(`/objective/${id}`);
     }
     return (
         <>
         {testsLoaded?(
             <div style={containerStyles}>
             <div style={{display:'flex',flexDirection:'column'}}>
-                <h3>View your pending tests here</h3>
+                <h3 style={{'marginBottom':'5%'}}>View your pending tests here</h3>
                     {pendingTests.map(item=>{
+                        let due_date = new Date(parseInt(item.scheduleDate.substr(6)));
+                        due_date = due_date.toDateString();
+                        const test_details = {
+                            test_id:item._id,
+                            subject:item.name
+                        }
                         return(
                             <Card>
-                            <h3 style={{color:'blue'}}>{item.name}</h3>
-                        <h5 style={{color:'black'}}>Due date:</h5>
-                        <div style={cardContent}>
-                            <p style={{color:'black'}}>Description</p>
-                        </div>
-                </Card>
+                            <h4 style={{color:'blue'}}>{item.name}</h4>
+                            <p style={{color:'black'}}>Due: {due_date}</p>
+                            <div style={cardContent}>
+                                <p style={{color:'black'}}>About: {item.description} </p>
+                                <p>Questions: {item.numberQuestions}</p>
+                            </div>
+                            <div name='testButton' style={{display:'flex',flexDirection:'row',justifyContent:'flex-end'}}>
+                                {item.type === 0? 
+                                (<Button  type="submit" variant="contained" color="primary" onClick={clickObjective.bind(this,JSON.stringify(test_details))}>
+                                objective test
+                                </Button>):
+                                (<Button  type="submit" variant="contained" color="primary" onClick={clickSubjective.bind(this,JSON.stringify(test_details))}>
+                                subjective test
+                                </Button>)}
+                                
+                                
+                            </div>
+                            </Card>
                         )
                     })}
-                        
-                <div style={{}}>
-                    <Button style={{marginBottom:'5%'}} type="submit" variant="contained" color="primary" onClick={clickSubjective}>
-                        Start subjective test
-                    </Button>
-                    <Button type="submit" variant="contained" color="primary" onClick={clickObjective}>
-                        Start objective test
-                    </Button>
-                </div>
                 
             </div>
         </div>
@@ -80,7 +91,7 @@ const Tests = () => {
                 color="#00BFFF"
                 height={100}
                 width={100}
-                timeout={3000}
+                timeout={4000}
                 />
 
         </div>)}
