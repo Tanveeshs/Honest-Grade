@@ -10,28 +10,32 @@ import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   navlinks: {
-    marginLeft: theme.spacing(10),
-    display: "flex",
+  display:'flex',
+  justifyContent:'center'    
   },
  logo: {
     flexGrow: "1",
     cursor: "pointer",
   },
   link: {
-    textDecoration: "none",
+    textDecoration: 'none',
     lineStyle:'none',
     fontWeight:'bold',
     color: "white",
+    width:'250px',
     fontSize: "16px",
-    marginLeft: theme.spacing(20),
     "&:hover": {
-      color: "yellow",
-      borderBottom: "1px solid white",
+      color: "lightblue",
+      fontSize:'large'
     },
   },
 }));
 
 export default function Navbar() {
+  const student_details = JSON.parse(
+    localStorage.getItem('user_details')
+    )
+
   const classes = useStyles();
   const [loggedIn, setLoggedIn] = useState(false);
   useEffect(() =>{
@@ -45,22 +49,22 @@ export default function Navbar() {
         <Typography variant="h5" className={classes.logo}>
         </Typography>
           <div className={classes.navlinks}>
-            <Link to="/" className={classes.link} >
-              Home
+            <Link to="/" className={classes.link} style={{marginRight:'2%',fontFamily:'Noto Serif Display',fontWeight:'bold',
+          fontSize:'24px'}}>
+              Honest Grade
             </Link>
-            {loggedIn === false ? (
+            {student_details === null ? (
                 <div>
-              <Link to="/login" className={classes.link}>
+              <Link to="/login" className={classes.link}  style={{marginRight:'10%'}}>
                 Login
               </Link>
               </div>
             ):
             (
-            <Link to="/tests" className={classes.link}>
-              Your tests
+            <Link to="/account" className={classes.link} style={{marginRight:'10%'}}>
+              Welcome {student_details.userID}
             </Link>
             )}
-            
           </div>
       </Toolbar>
     </AppBar>

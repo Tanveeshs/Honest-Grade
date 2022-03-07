@@ -61,6 +61,12 @@ const footnoteStyles = {
     flexDirection: 'column',
     borderRadius: '10px'
 }
+const buttonStyles = {
+    backgroundColor:'white',
+    border:'0.5px solid gray',
+    padding:'5px',
+    marginLeft:'5px'
+}
 
 export function SubjectiveStart() {
     Modal.setAppElement('#root')
@@ -144,7 +150,7 @@ export function SubjectiveStart() {
         setInterval(capture, 10000)
         SpeechRecognition.startListening()
         //Recursive task of 20 seconds for voice detection
-        setInterval(viewTranscript, 20000)
+        setInterval(viewTranscript, 5000)
         setInterval(() => {
             if (document.hasFocus() === false) {
                 openModal()
@@ -155,8 +161,7 @@ export function SubjectiveStart() {
     async function viewTranscript() {
         SpeechRecognition.stopListening()
         console.log("TRANSCRIPT", transcript)
-        resetTranscript()
-        SpeechRecognition.startListening()
+       
         let words = transcript.split(" ");
         if (words.length > 0) {
             await axios.post('https://honestgrade.herokuapp.com/violations/add', {
@@ -165,6 +170,8 @@ export function SubjectiveStart() {
                 violationType: 2
             })
         }
+        resetTranscript()
+        SpeechRecognition.startListening()
     }
 
     function onClick() {
@@ -181,8 +188,8 @@ export function SubjectiveStart() {
                     style={customStyles}
                     contentLabel="Warning"
                 >
-                    <h2 ref={(_subtitle) => (subtitle = _subtitle)}>You are caught switching tabs!This is a warning</h2>
-                    <button onClick={closeModal}>close</button>
+                    <h2 ref={(_subtitle) => (subtitle = _subtitle)}>You were caught switching tabs!This is a warning</h2>
+                    <button onClick={closeModal} style={buttonStyles}>close</button>
                 </Modal>
                 <div style={container}>
                     <div name='footnote' style={footnoteStyles}>
@@ -213,7 +220,7 @@ export function SubjectiveStart() {
                     contentLabel="Warning"
                 >
                     <h2 ref={(_subtitle) => (subtitle = _subtitle)}>You are caught switching tabs!This is a warning</h2>
-                    <button onClick={closeModal}>close</button>
+                    <button onClick={closeModal}>Close</button>
                 </Modal>
                 <SubjectiveQuiz disp={disp} questions={questions} assessmentId={assessmentId}
                                 numberQuestions={numberQuestions}></SubjectiveQuiz>

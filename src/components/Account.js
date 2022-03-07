@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import userimg from '../assets/userimg.jpeg'
+import Navbar from './Navbar'
 
 const Account = () => {
     const student_details = JSON.parse(localStorage.getItem('user_details'))
@@ -26,7 +27,9 @@ const Account = () => {
     }
 
     return ( 
-        <div style={container}>
+        <>
+        <Navbar/>
+         <div style={container}>
             <div>
                 <img src={userimg} style={img_style} alt="no_img"/>
             </div>
@@ -34,6 +37,8 @@ const Account = () => {
             <p>Name: {name}</p>
             <p>Portal Username: {userID}</p>
         </div>
+        </>
+       
      );
 }
  

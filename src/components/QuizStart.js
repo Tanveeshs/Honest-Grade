@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState,useRef,useCallback} from 'react';
 import {Button} from '@material-ui/core'
 import {useLocation} from 'react-router-dom'
 import {Quiz} from './Quiz'
 import axios from "axios";
 import '../App.css';
+import SpeechRecognition, {useSpeechRecognition} from "react-speech-recognition";
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 
@@ -31,7 +32,6 @@ function QuizStart() {
     const test_details = JSON.parse(test_details_string)
     console.log('TEST DETAILS', test_details)
 
-
     const [questions, setQuestions] = useState([]);
     const [assessmentId, setAssessment] = useState();
     const [examId, setExam] = useState();
@@ -57,6 +57,36 @@ function QuizStart() {
         })
     }
 
+     //Proctoring camera
+     const webcamRef = useRef(null);
+    //  const capture = useCallback(
+    //      () => {
+    //          if (webcamRef && webcamRef.current) {
+    //              const imageSrc = webcamRef.current.getScreenshot();
+    //              axios.post('http://localhost:5000/proctor', {
+    //                  file: imageSrc
+    //              }).then((resp) => {
+    //                  console.log("got resp", resp.data)
+ 
+    //              }).catch(e => {
+    //                  console.log("ERROR")
+    //              })
+    //          } else {
+    //              console.log("WEBCAM NOT THERE")
+    //          }
+    //      },
+    //      [webcamRef]
+    //  );
+     const {
+         transcript,
+         resetTranscript,
+         browserSupportsSpeechRecognition
+     } = useSpeechRecognition();
+ 
+     if (!browserSupportsSpeechRecognition) {
+         console.log('Browser doesn\'t support speech recognition.')
+     }
+
     useEffect(() => {
         setInterval(() => {
             if (document.hasFocus() === false) {
@@ -75,7 +105,32 @@ function QuizStart() {
             setNumberQuestions(resp.data.numberQuestions);
             setStartTestFlag(true)
         })
+        //Recursive task of 10 seconds for image frame
+        // setInterval(capture, 10000)
+        SpeechRecognition.startListening()
+        //Recursive task of 20 seconds for voice detection
+        setInterval(viewTranscript, 20000)
+        setInterval(() => {
+            if (document.hasFocus() === false) {
+                openModal()
+            }
+        }, 200)
     }, [])
+
+    async function viewTranscript() {
+        SpeechRecognition.stopListening()
+        console.log("TRANSCRIPT", transcript)
+        resetTranscript()
+        SpeechRecognition.startListening()
+        let words = transcript.split(" ");
+        if (words.length > 0) {
+            await axios.post('https://honestgrade.herokuapp.com/violations/add', {
+                assessmentId: assessmentId,
+                notes: transcript,
+                violationType: 2
+            })
+        }
+    }
 
 
     function startTest() {
