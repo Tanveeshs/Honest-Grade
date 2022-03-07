@@ -3,9 +3,7 @@ import axios from "axios";
 import SubjectiveQuiz from "./SubjectiveQuiz";
 import {useLocation} from 'react-router-dom'
 import blue_bg from '../assets/blue_bg.jpg'
-import Loader from "react-loader-spinner";
 import Webcam from "react-webcam";
-import SpeechRecognition, {useSpeechRecognition} from "react-speech-recognition";
 import Modal from "react-modal";
 
 const customStyles = {
@@ -72,15 +70,18 @@ export function SubjectiveStart() {
     const curr_url = loc.pathname
     let test_details_string = curr_url.split('/')[2]
     const test_details = JSON.parse(test_details_string)
-    console.log('TEST DETAILS', test_details)
 
-    console.log('USER', userDetails)
     const [questions, setQuestions] = useState([]);
     const [assessmentId, setAssessment] = useState();
     const [numberQuestions, setNumberQuestions] = useState(0);
     const [disp, setDisp] = useState(false);
-    const [warningCount, setWarningCount] = useState(0);
     const [modalIsOpen, setIsOpen] = React.useState(false);
+    // const {
+        // transcript,
+        // listening,
+        // resetTranscript,
+        // browserSupportsSpeechRecognition
+    // } = useSpeechRecognition();
 
     function openModal() {
         setIsOpen(true);
@@ -101,71 +102,47 @@ export function SubjectiveStart() {
 
     //Proctoring camera
     const webcamRef = useRef(null);
-    const capture = useCallback(
-        () => {
-            if (webcamRef && webcamRef.current) {
-                const imageSrc = webcamRef.current.getScreenshot();
-                axios.post('http://localhost:5000/proctor', {
-                    file: imageSrc
-                }).then((resp) => {
-                    console.log("got resp", resp.data)
-
-                }).catch(e => {
-                    console.log("ERROR")
-                })
-            } else {
-                console.log("WEBCAM NOT THERE")
-            }
-        },
-        [webcamRef]
-    );
-    const {
-        transcript,
-        resetTranscript,
-        browserSupportsSpeechRecognition
-    } = useSpeechRecognition();
-
-    if (!browserSupportsSpeechRecognition) {
-        console.log('Browser doesn\'t support speech recognition.')
+    const capture = (assessmentId) => {
+        console.log(assessmentId)
+        if (webcamRef && webcamRef.current && assessmentId) {
+            const imageSrc = webcamRef.current.getScreenshot();
+            console.log(assessmentId)
+            axios.post('http://localhost:5000/proctor', {
+                file: imageSrc,
+                assessmentId: assessmentId
+            }).then((resp) => {
+                console.log("got resp", resp.data)
+            }).catch(e => {
+                console.log("ERROR")
+            })
+        } else {
+            console.log("WEBCAM NOT THERE")
+            console.log(assessmentId, webcamRef)
+        }
     }
-    useEffect(() => {
+
+    // if (!browserSupportsSpeechRecognition) {
+    //     console.log('Browser doesn\'t support speech recognition.')
+    // }
+    useEffect(async () => {
         // setInterval(checkFocus, 200, [tabWarning, warningCount])
-        axios.post('https://honestgrade.herokuapp.com/assessment/startSubjectiveAssessment', {
+        let resp = await axios.post('https://honestgrade.herokuapp.com/assessment/startSubjectiveAssessment', {
             studentId: userDetails._id,
             examId: test_details.test_id
         })
-            .then((resp) => {
-                console.log("RESP", resp.data)
-                setQuestions([...resp.data.questions]);
-                setAssessment(resp.data.assessmentId);
-                setNumberQuestions(resp.data.questions.length);
-            })
-        //Recursive task of 10 seconds for image frame
-        setInterval(capture, 10000)
-        SpeechRecognition.startListening()
-        //Recursive task of 20 seconds for voice detection
-        setInterval(viewTranscript, 20000)
+        let assessmentId = resp.data.assessmentId
+        setQuestions([...resp.data.questions]);
+        setAssessment(resp.data.assessmentId);
+        setNumberQuestions(resp.data.questions.length);
+        setInterval(() => {
+            capture(assessmentId)
+        }, 10000)
         setInterval(() => {
             if (document.hasFocus() === false) {
                 openModal()
             }
-        }, 200)
+        }, 500)
     }, [])
-
-    async function viewTranscript() {
-        SpeechRecognition.stopListening()
-        console.log("TRANSCRIPT", transcript)
-        resetTranscript()
-        SpeechRecognition.startListening()
-        let words = transcript.split(" ");
-        if (words.length > 0) {
-            await axios.post('https://honestgrade.herokuapp.com/violations/add', {
-                assessmentId: assessmentId,
-                notes: transcript,
-                violationType: 2
-            })
-        }
-    }
 
     function onClick() {
         setDisp(true)
@@ -173,33 +150,45 @@ export function SubjectiveStart() {
 
     if (!disp) {
         return (
-            <div style={main}>
-                <Modal
-                    isOpen={modalIsOpen}
-                    onAfterOpen={afterOpenModal}
-                    onRequestClose={closeModal}
-                    style={customStyles}
-                    contentLabel="Warning"
-                >
-                    <h2 ref={(_subtitle) => (subtitle = _subtitle)}>You are caught switching tabs!This is a warning</h2>
-                    <button onClick={closeModal}>close</button>
-                </Modal>
-                <div style={container}>
-                    <div name='footnote' style={footnoteStyles}>
-                        <p>This test is proctored. Please do not leave or minimize this page at any point of time.
-                            <span style={{fontWeight: 'bold'}}> Any changes that take place will lead to test being cancelled</span>
-                        </p>
-                        <p style={{fontSize: '22px'}}>Welcome to your Test!</p>
-                        <p style={{fontSize: '18px'}}>UserID: {userDetails.userID}</p>
-                        <p style={{fontSize: '18px'}}>Subject: {test_details.subject}</p>
+            <div>
+                <div style={main}>
+                    <Modal
+                        isOpen={modalIsOpen}
+                        onAfterOpen={afterOpenModal}
+                        onRequestClose={closeModal}
+                        style={customStyles}
+                        contentLabel="Warning"
+                    >
+
+                        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>You are caught switching tabs!This is a
+                            warning</h2>
+                        <button onClick={closeModal}>close</button>
+                    </Modal>
+                    <div style={container}>
+                        <div name='footnote' style={footnoteStyles}>
+                            <p>This test is proctored. Please do not leave or minimize this page at any point of time.
+                                <span style={{fontWeight: 'bold'}}> Any changes that take place will lead to test being cancelled</span>
+                            </p>
+                            <p style={{fontSize: '22px'}}>Welcome to your Test!</p>
+                            <p style={{fontSize: '18px'}}>UserID: {userDetails.userID}</p>
+                            <p style={{fontSize: '18px'}}>Subject: {test_details.subject}</p>
+                        </div>
+
+
+                        <button onClick={onClick} style={startButton}>Start</button>
+                        <SubjectiveQuiz disp={disp} questions={questions}
+                                        assessmentId={assessmentId} numberQuestions={numberQuestions}>
+                        </SubjectiveQuiz>
                     </div>
-
-
-                    <button onClick={onClick} style={startButton}>Start</button>
-                    <SubjectiveQuiz disp={disp} questions={questions}
-                                    assessmentId={assessmentId} numberQuestions={numberQuestions}>
-                    </SubjectiveQuiz>
                 </div>
+                <Webcam
+                    audio={false}
+                    height={200}
+                    width={200}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                    videoConstraints={videoConstraints}
+                />
             </div>
         );
     } else {
@@ -217,6 +206,16 @@ export function SubjectiveStart() {
                 </Modal>
                 <SubjectiveQuiz disp={disp} questions={questions} assessmentId={assessmentId}
                                 numberQuestions={numberQuestions}></SubjectiveQuiz>
+                <div style={{height: 0}}>
+                    <Webcam
+                        audio={false}
+                        height={200}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        width={200}
+                        videoConstraints={videoConstraints}
+                    />
+                </div>
             </div>
         );
     }

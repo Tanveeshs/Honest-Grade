@@ -19,11 +19,11 @@ const Tests = () => {
     const loadTests = async () => {
         const data = await axios.post('https://honestgrade.herokuapp.com/student/getCurrentExams',{
             id:student_details._id
-        })   
+        })
         .then(res=>{
             console.log(res.data.exams)
             setTimeout(() => {
-                
+
             }, 3000);
             setPendingTests(res.data.exams)
             console.log(pendingTests)

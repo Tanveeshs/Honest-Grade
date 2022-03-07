@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Button} from '@material-ui/core'
 import {useLocation} from 'react-router-dom'
 import {Quiz} from './Quiz'
 import axios from "axios";
 import '../App.css';
-import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
+import Webcam from "react-webcam";
 
 const customStyles = {
     content: {
@@ -17,7 +17,11 @@ const customStyles = {
         transform: 'translate(-50%, -50%)',
     },
 };
-
+const videoConstraints = {
+    width: 1280,
+    height: 720,
+    facingMode: "user"
+};
 function QuizStart() {
     Modal.setAppElement('#root')
     let subtitle;
@@ -57,24 +61,45 @@ function QuizStart() {
         })
     }
 
-    useEffect(() => {
+    const webcamRef = useRef(null);
+    const capture = (assessmentId) => {
+        console.log(assessmentId)
+        if (webcamRef && webcamRef.current && assessmentId) {
+            const imageSrc = webcamRef.current.getScreenshot();
+            console.log(assessmentId)
+            axios.post('http://localhost:5000/proctor', {
+                file: imageSrc,
+                assessmentId: assessmentId
+            }).then((resp) => {
+                console.log("got resp", resp.data)
+            }).catch(e => {
+                console.log("ERROR")
+            })
+        } else {
+            console.log("WEBCAM NOT THERE")
+            console.log(assessmentId, webcamRef)
+        }
+    }
+    useEffect(async () => {
+
+        let resp = await axios.post('https://honestgrade.herokuapp.com/assessment/start', {
+                "studentId": userDetails._id,
+                "examId": test_details.test_id
+            }
+        )
+        setQuestions([...resp.data.questions]);
+        setAssessment(resp.data.assessmentId);
+        setExam(resp.data.examId);
+        setNumberQuestions(resp.data.numberQuestions);
+        setStartTestFlag(true)
         setInterval(() => {
             if (document.hasFocus() === false) {
                 openModal()
             }
-        }, 200)
-        axios.post('https://honestgrade.herokuapp.com/assessment/start', {
-                "studentId": userDetails._id,
-                "examId": test_details.test_id
-            }
-        ).then(resp => {
-            console.log(resp.data);
-            setQuestions([...resp.data.questions]);
-            setAssessment(resp.data.assessmentId);
-            setExam(resp.data.examId);
-            setNumberQuestions(resp.data.numberQuestions);
-            setStartTestFlag(true)
-        })
+        }, 500)
+        setInterval(() => {
+            capture(assessmentId)
+        }, 10000)
     }, [])
 
 
@@ -112,6 +137,14 @@ function QuizStart() {
                 </Modal>
                 <Quiz disp={disp} questions={questions} assessmentId={assessmentId} examId={examId}
                       numberQuestions={numberQuestions}></Quiz>
+                <Webcam
+                    audio={false}
+                    height={200}
+                    width={200}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                    videoConstraints={videoConstraints}
+                />
             </div>
         );
     } else {
@@ -130,6 +163,14 @@ function QuizStart() {
                 </Modal>
                 <Quiz disp={disp} questions={questions} assessmentId={assessmentId} examId={examId}
                       numberQuestions={numberQuestions}></Quiz>
+                <Webcam
+                    audio={false}
+                    height={200}
+                    width={200}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                    videoConstraints={videoConstraints}
+                />
             </div>
         );
     }
