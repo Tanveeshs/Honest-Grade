@@ -4,7 +4,23 @@ import  {useHistory } from 'react-router-dom'
 import Card from './Card.js'
 import axios from 'axios'
 import Loader from "react-loader-spinner";
+import Navbar from './Navbar'
 
+
+//styles
+const loaderStyles = {
+    display:'flex',
+    justifyContent:'center',
+    alignItems:'center',
+    height:'100%',
+    width:'100%',
+    flexDirection:'row',
+}
+
+const containerStyles = {
+    backgroundColor:'white',
+    margin:'5%'
+}
 
 const Tests = () => {
     const student_details = JSON.parse(localStorage.getItem('user_details'))
@@ -34,10 +50,7 @@ const Tests = () => {
     useEffect(() =>{
         loadTests()
     }, [])
-    const containerStyles = {
-        backgroundColor:'white',
-        margin:'5%'
-    }
+    
     const nav = useHistory()
     const clickSubjective = (id)=>{
             nav.replace(`/subjective/${id}`)
@@ -48,6 +61,7 @@ const Tests = () => {
     }
     return (
         <>
+        <Navbar/>
         {testsLoaded?(
             <div style={containerStyles}>
             <div style={{display:'flex',flexDirection:'column'}}>
@@ -85,13 +99,13 @@ const Tests = () => {
             </div>
         </div>
         ):
-        (<div>
+        (<div style={loaderStyles}>
             <Loader
                 type="Circles"
                 color="#00BFFF"
                 height={100}
                 width={100}
-                timeout={4000}
+                timeout={2000}
                 />
 
         </div>)}

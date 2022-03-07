@@ -56,6 +56,7 @@ const sidebarItem = {
 }
 
 function DashboardStart() {
+  const student_details = JSON.parse(localStorage.getItem('user_details'))
   const classes = useStyles();
   const [userDetails, setUser] = useState({});
   const [loggedIn, setLoggedIn] = useState(false);
@@ -75,7 +76,7 @@ function DashboardStart() {
 
   return (
       <>
-      <div style={sidebarStyles}>
+      {/* <div style={sidebarStyles}>
         <div style={sidebarContent}>
           <div style={sidebarHeader}>
             <h3 style={{fontWeight:'bold'}}>
@@ -89,7 +90,7 @@ function DashboardStart() {
           <h5 style={sidebarItem}>Other</h5>
           </div>
         </div>
-      </div>
+      </div> */}
       <AppBar position="static" style={{backgroundColor:'black'}}>
       <CssBaseline />
       <Toolbar>
@@ -99,10 +100,10 @@ function DashboardStart() {
               (
                 <div>
                   <Link to="/" className={classes.link} style={{marginRight:'50px'}}>
-              Home
+                Home
             </Link>
                 <Link to="/tests" className={classes.link}>
-                  Your tests
+                  Welcome {student_details.userID}
                 </Link>
                 </div>
                 
@@ -127,10 +128,9 @@ function DashboardStart() {
         <h2 style={{margin:'10px'}}>Welcome student!</h2>
         <h3 style={{margin:'10px'}}>Please login with your student ID to begin your tests</h3>
     </div>
-    ):(<div style={{marginTop:'10%'}}>
+    ):(<div style={{marginTop:'10%',}}>
         <h2 style={{margin:'10px'}}>Welcome {(userDetails!==null)?userDetails.name:"Rishabh"}!</h2>
         <h3 style={{margin:'10px'}}>Student ID: {(userDetails!==null)?userDetails.userID:"DJSCE123"} </h3>
-        <h4 style={{margin:'10px'}}>You have 2 tests pending</h4>
         <Button color='default' variant='contained'>
         <Link to="/tests">
               Take your tests
