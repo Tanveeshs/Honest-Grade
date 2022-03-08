@@ -75,13 +75,14 @@ function DashboardStart() {
   }
   useEffect(()=>{
       if(student_details){
+          console.log("SET LOGGED IN")
           setLoggedIn(true)
       }
   })
 
   return (
       <>
-      {/* <div style={sidebarStyles}>
+      <div style={sidebarStyles}>
         <div style={sidebarContent}>
           <div style={sidebarHeader}>
             <h3 style={{fontWeight:'bold'}}>
@@ -95,11 +96,11 @@ function DashboardStart() {
           <h5 style={sidebarItem}>Other</h5>
           </div>
         </div>
-      </div> */}
+      </div>
       <AppBar position="static" style={{backgroundColor:'black'}}>
       <CssBaseline />
       <Toolbar>
-          <div className={classes.navlinks}>
+          <div className={classes.navlinks} style={{marginLeft:"40%"}}>
             
             {loggedIn ? 
               (
@@ -128,12 +129,12 @@ function DashboardStart() {
           </div>
       </Toolbar>
     </AppBar>
-    {loggedIn?(
-        <div style={{marginTop:'10%'}}>
+    {!loggedIn?(
+        <div style={{marginTop:'10%',marginLeft:'40%'}}>
         <h2 style={{margin:'10px'}}>Welcome student!</h2>
         <h3 style={{margin:'10px'}}>Please login with your student ID to begin your tests</h3>
     </div>
-    ):(<div style={{marginTop:'10%',}}>
+    ):(<div style={{marginTop:'10%',marginLeft:'40%'}}>
         <h2 style={{margin:'10px'}}>Welcome {(userDetails!==null)?student_details.name:"Rishabh"}!</h2>
         <h3 style={{margin:'10px'}}>Student ID: {(userDetails!==null)?student_details.userID:"DJSCE123"} </h3>
         <Button color='default' variant='contained'>
