@@ -89,6 +89,7 @@ function QuizStart() {
         )
         setQuestions([...resp.data.questions]);
         setAssessment(resp.data.assessmentId);
+        let assessmentIdAg = resp.data.assessmentId;
         setExam(resp.data.examId);
         setNumberQuestions(resp.data.numberQuestions);
         setStartTestFlag(true)
@@ -98,7 +99,7 @@ function QuizStart() {
             }
         }, 500)
         setInterval(() => {
-            capture(assessmentId)
+            capture(assessmentIdAg)
         }, 10000)
     }, [])
 

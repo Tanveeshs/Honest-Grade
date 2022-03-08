@@ -60,7 +60,7 @@ function DashboardStart() {
   const classes = useStyles();
   const [userDetails, setUser] = useState({});
   const [loggedIn, setLoggedIn] = useState(false);
-
+  console.log(student_details)
   //functions
   const nav = useHistory()
 
@@ -73,6 +73,11 @@ function DashboardStart() {
   const takeToAcc = () => {
     nav.replace('/account')
   }
+  useEffect(()=>{
+      if(student_details){
+          setLoggedIn(true)
+      }
+  })
 
   return (
       <>
@@ -129,8 +134,8 @@ function DashboardStart() {
         <h3 style={{margin:'10px'}}>Please login with your student ID to begin your tests</h3>
     </div>
     ):(<div style={{marginTop:'10%',}}>
-        <h2 style={{margin:'10px'}}>Welcome {(userDetails!==null)?userDetails.name:"Rishabh"}!</h2>
-        <h3 style={{margin:'10px'}}>Student ID: {(userDetails!==null)?userDetails.userID:"DJSCE123"} </h3>
+        <h2 style={{margin:'10px'}}>Welcome {(userDetails!==null)?student_details.name:"Rishabh"}!</h2>
+        <h3 style={{margin:'10px'}}>Student ID: {(userDetails!==null)?student_details.userID:"DJSCE123"} </h3>
         <Button color='default' variant='contained'>
         <Link to="/tests">
               Take your tests
