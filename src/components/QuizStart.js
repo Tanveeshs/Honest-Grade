@@ -6,6 +6,7 @@ import axios from "axios";
 import '../App.css';
 import Modal from 'react-modal';
 import Webcam from "react-webcam";
+import SpeechRecognition, {useSpeechRecognition} from "react-speech-recognition";
 
 const customStyles = {
     content: {
@@ -22,6 +23,7 @@ const videoConstraints = {
     height: 720,
     facingMode: "user"
 };
+
 function QuizStart() {
     Modal.setAppElement('#root')
     let subtitle;
@@ -33,8 +35,14 @@ function QuizStart() {
     const curr_url = loc.pathname
     let test_details_string = curr_url.split('/')[2]
     const test_details = JSON.parse(test_details_string)
-    console.log('TEST DETAILS', test_details)
 
+    const {
+        transcript,
+        resetTranscript,
+        listening,
+        interimTranscript,
+        finalTranscript,
+    } = useSpeechRecognition();
 
     const [questions, setQuestions] = useState([]);
     const [assessmentId, setAssessment] = useState();
@@ -63,10 +71,8 @@ function QuizStart() {
 
     const webcamRef = useRef(null);
     const capture = (assessmentId) => {
-        console.log(assessmentId)
         if (webcamRef && webcamRef.current && assessmentId) {
             const imageSrc = webcamRef.current.getScreenshot();
-            console.log(assessmentId)
             axios.post('http://localhost:5000/proctor', {
                 file: imageSrc,
                 assessmentId: assessmentId
@@ -77,11 +83,9 @@ function QuizStart() {
             })
         } else {
             console.log("WEBCAM NOT THERE")
-            console.log(assessmentId, webcamRef)
         }
     }
     useEffect(async () => {
-
         let resp = await axios.post('https://honestgrade.herokuapp.com/assessment/start', {
                 "studentId": userDetails._id,
                 "examId": test_details.test_id
@@ -103,9 +107,25 @@ function QuizStart() {
         }, 10000)
     }, [])
 
+    useEffect(()=>{
+        if(!listening){
+            SpeechRecognition.startListening({continue:true})
+            if(assessmentId && transcript!==""){
+                console.log("Assessment ID is",assessmentId)
+                axios.post('https://honestgrade.herokuapp.com/violations/add',{
+                    assessmentId:assessmentId,
+                    violationType:2,
+                    notes:transcript
+                }).then(v=>{
+                    console.log("Violation Recorded")
+                })
+            }
+        }
+    },[listening])
 
     function startTest() {
         setDisp(true)
+        SpeechRecognition.startListening({continue:true})
     }
 
     function quizDetails() {
@@ -164,6 +184,7 @@ function QuizStart() {
                 </Modal>
                 <Quiz disp={disp} questions={questions} assessmentId={assessmentId} examId={examId}
                       numberQuestions={numberQuestions}></Quiz>
+
                 <Webcam
                     audio={false}
                     height={200}
@@ -172,6 +193,7 @@ function QuizStart() {
                     screenshotFormat="image/jpeg"
                     videoConstraints={videoConstraints}
                 />
+                Transcript {transcript}
             </div>
         );
     }

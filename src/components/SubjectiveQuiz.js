@@ -12,7 +12,6 @@ export function SubjectiveQuiz(props) {
     // const questions = props.questions;
     let [questions, setQuestions] = useState(props.questions);
     const assessmentId = props.assessmentId;
-    console.log(assessmentId)
     const alert = useAlert()
 
     const numberQuestions = props.numberQuestions;
@@ -30,7 +29,6 @@ export function SubjectiveQuiz(props) {
         }
         setAnswer(tempObj);
     }, []);
-    console.log(answer)
 
     function handleChange(e) {
         setCurrentAnswer(e.target.value);
@@ -87,7 +85,6 @@ export function SubjectiveQuiz(props) {
             })
         
     }
-    console.log("SCORE",score)
     const containerStyles = {
         display:'flex',
         flexDirection:'column',
@@ -123,7 +120,6 @@ export function SubjectiveQuiz(props) {
         borderRadius:'5px'
     }
 
-    // console.log("SCORE",score)
     if (props.disp === true) {
         if(scoreLoading===false && score===undefined){
             return (

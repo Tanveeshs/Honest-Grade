@@ -5,6 +5,7 @@ import {useLocation} from 'react-router-dom'
 import blue_bg from '../assets/blue_bg.jpg'
 import Webcam from "react-webcam";
 import Modal from "react-modal";
+import SpeechRecognition, {useSpeechRecognition} from "react-speech-recognition";
 
 const customStyles = {
     content: {
@@ -76,12 +77,10 @@ export function SubjectiveStart() {
     const [numberQuestions, setNumberQuestions] = useState(0);
     const [disp, setDisp] = useState(false);
     const [modalIsOpen, setIsOpen] = React.useState(false);
-    // const {
-        // transcript,
-        // listening,
-        // resetTranscript,
-        // browserSupportsSpeechRecognition
-    // } = useSpeechRecognition();
+    const {
+        transcript,
+        listening,
+    } = useSpeechRecognition();
 
     function openModal() {
         setIsOpen(true);
@@ -103,7 +102,6 @@ export function SubjectiveStart() {
     //Proctoring camera
     const webcamRef = useRef(null);
     const capture = (assessmentId) => {
-        console.log(assessmentId)
         if (webcamRef && webcamRef.current && assessmentId) {
             const imageSrc = webcamRef.current.getScreenshot();
             console.log(assessmentId)
@@ -117,13 +115,9 @@ export function SubjectiveStart() {
             })
         } else {
             console.log("WEBCAM NOT THERE")
-            console.log(assessmentId, webcamRef)
         }
     }
 
-    // if (!browserSupportsSpeechRecognition) {
-    //     console.log('Browser doesn\'t support speech recognition.')
-    // }
     useEffect(async () => {
         // setInterval(checkFocus, 200, [tabWarning, warningCount])
         let resp = await axios.post('https://honestgrade.herokuapp.com/assessment/startSubjectiveAssessment', {
@@ -146,7 +140,25 @@ export function SubjectiveStart() {
 
     function onClick() {
         setDisp(true)
+        SpeechRecognition.startListening({continue:true})
     }
+
+    useEffect(()=>{
+        if(!listening){
+            SpeechRecognition.startListening({continue:true})
+            if(assessmentId && transcript!==""){
+                console.log("Assessment ID is",assessmentId)
+                console.log("Transcript",)
+                axios.post('https://honestgrade.herokuapp.com/violations/add',{
+                    assessmentId:assessmentId,
+                    violationType:2,
+                    notes:transcript
+                }).then(v=>{
+                    console.log("Violation Recorded")
+                })
+            }
+        }
+    },[listening])
 
     if (!disp) {
         return (

@@ -57,11 +57,7 @@ export function Quiz(props) {
         questionArray = questions1;
     }
 
-
-
-    console.log("QUESTION ARRAY",questionArray);
     const question = questionArray[currentQuestion];
-    // console.log("STATE",state);
 
     const renderError = () => {
         if (!error) {
@@ -71,7 +67,6 @@ export function Quiz(props) {
         return <div className='error'>{error}</div>
     }
     const next = async () => {
-        console.log(state)
         const answer = {
             questionId: question.question._id,
             answer: currentAnswer
@@ -81,7 +76,6 @@ export function Quiz(props) {
             return;
         }
         if((currentQuestion+1)>=numberQuestions1){
-            console.log("IS IT HERE?")
             await dispatch({type:'END_QUIZ', end_quiz_flag:true})
             try{
                 await axios.post('https://honestgrade.herokuapp.com/assessment/answerQuestion',{
@@ -110,8 +104,6 @@ export function Quiz(props) {
                 answer1:answers[0].answer,
                 answer2:answer.answer
             });
-            console.log("QUESTIONS",resp.data.questions);
-            console.log("QQ")
             await dispatch({type:ADD_QUESTIONS,questions:resp.data.questions});
             await dispatch({ type: SET_CURRENT_ANSWER, currentAnswer: '' })
             if (currentQuestion < numberQuestions) {
