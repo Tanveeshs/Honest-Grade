@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useCallback} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import axios from "axios";
 import SubjectiveQuiz from "./SubjectiveQuiz";
 import {useLocation} from 'react-router-dom'
@@ -111,7 +111,7 @@ export function SubjectiveStart() {
             }).then((resp) => {
                 console.log("got resp", resp.data)
             }).catch(e => {
-                console.log("ERROR")
+                console.log("ERROR",e)
             })
         } else {
             console.log("WEBCAM NOT THERE")
@@ -153,7 +153,7 @@ export function SubjectiveStart() {
                     assessmentId:assessmentId,
                     violationType:2,
                     notes:transcript
-                }).then(v=>{
+                }).then(()=>{
                     console.log("Violation Recorded")
                 })
             }
@@ -217,7 +217,7 @@ export function SubjectiveStart() {
                     <button onClick={closeModal}>close</button>
                 </Modal>
                 <SubjectiveQuiz disp={disp} questions={questions} assessmentId={assessmentId}
-                                numberQuestions={numberQuestions}></SubjectiveQuiz>
+    numberQuestions={numberQuestions}/>
                 <div style={{height: 0}}>
                     <Webcam
                         audio={false}
