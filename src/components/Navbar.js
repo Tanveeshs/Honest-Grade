@@ -7,8 +7,14 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import userimg from '../assets/userimg.jpeg'
+
 
 const useStyles = makeStyles((theme) => ({
+  title:{
+   marginLeft:'45%',
+    margin:'auto'
+  },
   navlinks: {
   display:'flex',
   justifyContent:'center'    
@@ -22,14 +28,30 @@ const useStyles = makeStyles((theme) => ({
     lineStyle:'none',
     fontWeight:'bold',
     color: "white",
-    width:'250px',
+    width:'200px',
     fontSize: "16px",
     "&:hover": {
       color: "lightblue",
       fontSize:'large'
     },
+    
   },
+  user:{
+    fontFamily:'Noto Serif Display',
+     fontWeight:'bold',
+     padding:'7px',
+     border:'1px solid lightgray',
+     borderRadius:'5px'
+
+  }
+  
 }));
+const img_style = {
+  height:'30px',
+  width:'30px',
+  borderRadius:'5px',
+  marginRight:'2px'
+}
 
 export default function Navbar() {
   const student_details = JSON.parse(
@@ -44,16 +66,16 @@ export default function Navbar() {
   return (
       <>
       <AppBar position="static" style={{backgroundColor:'black'}}>
-      <CssBaseline />
-      <Toolbar>
-        <Typography variant="h5" className={classes.logo}>
-        </Typography>
-          <div className={classes.navlinks}>
-            <Link to="/" className={classes.link} style={{marginRight:'2%',fontFamily:'Noto Serif Display',fontWeight:'bold',
+      <Toolbar style={{width:'100%'}}>
+          <div className={classes.title}>
+            <Link to="/" className={classes.link} style={{fontFamily:'Noto Serif Display',fontWeight:'bold',
           fontSize:'24px'}}>
               Honest Grade
             </Link>
-            {student_details === null ? (
+            
+          </div>
+          <div className={classes.user}>
+          {student_details === null ? (
                 <div>
               <Link to="/login" className={classes.link}  style={{marginRight:'10%'}}>
                 Login
@@ -62,7 +84,10 @@ export default function Navbar() {
             ):
             (
             <Link to="/account" className={classes.link} style={{marginRight:'10%'}}>
+              <img src={userimg} style={img_style} alt="no_img"/>
+
               Welcome {student_details.userID}
+              
             </Link>
             )}
           </div>
@@ -71,3 +96,4 @@ export default function Navbar() {
     </>
     )
             }
+

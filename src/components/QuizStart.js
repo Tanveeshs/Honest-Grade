@@ -7,6 +7,7 @@ import '../App.css';
 import Modal from 'react-modal';
 import Webcam from "react-webcam";
 import SpeechRecognition, {useSpeechRecognition} from "react-speech-recognition";
+import Card from './Card.js'
 
 const customStyles = {
     content: {
@@ -23,6 +24,10 @@ const videoConstraints = {
     height: 720,
     facingMode: "user"
 };
+const bg = {
+    backgroundColor:'#afccdb',
+    margin:'5%'
+}
 
 function QuizStart() {
     Modal.setAppElement('#root')
@@ -130,15 +135,15 @@ function QuizStart() {
 
     function quizDetails() {
         return (
-            <div>
-                <h2>Review your details</h2>
+            <Card style={{backgroundColor:'lightblue'}}>
+                <h2>Confirm your details</h2>
                 <ul>
                     <li>Student ID: {userDetails.userID}</li>
                     <li>Subject Name: {test_details.subject}</li>
                 </ul>
-                <Button variant='outlined' color="primary" disabled={!startTestFlag} style={{marginLeft: '5%'}}
+                <Button variant='outlined' color="default" disabled={!startTestFlag} style={{marginLeft: '5%'}}
                         onClick={startTest}>Start Quiz</Button>
-            </div>
+            </Card>
         )
     }
 
@@ -171,7 +176,7 @@ function QuizStart() {
     } else {
 
         return (
-            <div>
+            <div style={bg}>
                 <Modal
                     isOpen={modalIsOpen}
                     onAfterOpen={afterOpenModal}
