@@ -125,36 +125,43 @@ const Report = () => {
                                 </div>
                                 {showDrop?(<div>
                                         <p style={textStylesDesc}>No. of questions in exam: {assn.numberQuestions}</p>
+                                        {assn.type=='1'?(
+                                            <div>
                                             <p style={textStylesDesc}>
-                                                <span>
-                                                    <Question
-                                                        style={{fontSize:'30px',color:'#80cae0'}}
-                                                    />
-                                                </span>
+                                            <span>
+                                                <Question
+                                                    style={{fontSize:'30px',color:'#80cae0'}}
+                                                />
+                                            </span>
                                                 Question specifics</p>
-                                            {test.answers.map(item=>{
-                                                return(
-                                                    <div style={{display:'flex',flexDirection:'column'}}>
-                                                        <p style={{color:'lightgray',fontSize:'15px'}}>{test.answers.indexOf(item)+1}. {item.question.question}</p>
-                                                            {item.yourAnswer === item.question.answer?
-                                                            <p style={{fontSize:'12px'}}>Your answer was correct
-                                                                <span><Check
-                                                            style={{fontSize:'20px',color:'green'}}
-                                                            /></span>
-                                                            </p>
-                                                                :(
-                                                                    <p style={{fontSize:'12px'}}>Your answer was wrong
-                                                                    <span><Close
-                                                                style={{fontSize:'24px',color:'red'}}
-                                                                /></span>
-                                                                </p>
-                                                            )
-                                                            }
+                                                        {test.answers.map(item=>{
+                                                            return(
+                                                                <div style={{display:'flex',flexDirection:'column',fontFamily:'Sans Serif'}}>
+                                                                    
+                                                                    <p style={{color:'lightgray',fontSize:'15px'}}>{test.answers.indexOf(item)+1}. {item.question.question}</p>
+                                                                        {item.yourAnswer === item.question.answer?
+                                                                        <p style={{fontSize:'12px'}}>Your answer was correct
+                                                                            <span><Check
+                                                                        style={{fontSize:'20px',color:'green'}}
+                                                                        /></span>
+                                                                        </p>
+                                                                            :(
+                                                                                <p style={{fontSize:'12px'}}>Your answer was wrong
+                                                                                <span><Close
+                                                                            style={{fontSize:'24px',color:'red'}}
+                                                                            /></span>
+                                                                            </p>
+                                                                        )
+                                                        
+                                                </div>
+                                        ):
+                                        null}
+                                            
                                                     </div>
                                                     
-                                                )
+                                                ):null
                                                 
-                                            })}
+                                            }
                                    
                                     </div>):(null)}
                             </Card>

@@ -115,13 +115,7 @@ function DashboardStart() {
               />
             </span>
             Tests</h5>
-          <h5 onClick={takeToAssn} style={sidebarItem}>
-          <span>
-              <QuestionAnswer
-                style={iconStyles}
-              />
-            </span>
-            Assignments</h5>
+         
           <h5 style={sidebarItem} onClick={takeToReport}>
           <span>
               <Assessment
@@ -182,7 +176,9 @@ function DashboardStart() {
       </Toolbar>
     </AppBar>
     {!loggedIn?(
+        
         <div style={{marginTop:'10%',marginLeft:'40%'}}>
+          
         <h2 style={{margin:'10px'}}>Welcome student!</h2>
         <h3 style={{margin:'10px'}}>Please login with your student ID to begin your tests</h3>
     </div>

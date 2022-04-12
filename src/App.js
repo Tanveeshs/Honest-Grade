@@ -26,7 +26,6 @@ export default function App() {
                     <PrivateRoute exact path="/subjective/:id" component={SubjectiveStart}/>
                     <PrivateRoute exact path="/" component={DashboardStart}/>
                     <PrivateRoute exact path="/tests" component={Tests}/>
-                    <PrivateRoute exact path="/assn" component={Assignments}/>
                     <Route exact path="/login" component={Login}/>
                     <PrivateRoute exact path="/account" component={Account}/>
                     <PrivateRoute exact path="/report" component={Report}/>
