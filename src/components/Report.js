@@ -99,8 +99,8 @@ const Report = () => {
             {testsLoaded?(
             <div style={{display:'flex',flexWrap:'flex-wrap'}}>
                     {givenTests.map(test=>{
-                        let assn = test.exam[0] 
-                        let due_date = new Date(parseInt(assn.scheduleDate.substr(6)));
+                        let assn = test.exam[0]
+                        let due_date = assn.scheduleDate.split('T')[0];
                         return(
                             <>  
                             
@@ -111,7 +111,7 @@ const Report = () => {
                                 <Subject style={{fontSize:'30px',fontWeight:'bold',marginRight:'10px'}}/>
                                 <p style={textStylesHeading}>{test.exam[0].name}</p>
                                 </div>
-                                <p style={textStylesDesc}>Date: {due_date.toDateString()}</p>
+                                <p style={textStylesDesc}>Date: {due_date}</p>
                                 <h4 style={textStylesDesc}>Score: {test.score} out of {test.totalMarks}</h4>
                                 <div onClick={toggleDrop} style={{display:'flex',flexDirection:'row',alignItems:'center'}}>
                                     <p style={{...textStylesDesc,fontWeight:'bold'}}>View Details
