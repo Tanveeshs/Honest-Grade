@@ -8,6 +8,11 @@ import {
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import userimg from '../assets/userimg.jpeg'
+import {
+  
+  AccountBox,
+  
+} from '@material-ui/icons'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -52,6 +57,17 @@ const img_style = {
   borderRadius:'5px',
   marginRight:'2px'
 }
+const iconStyles = {
+  color:'white',
+  fontSize:'30px',
+  marginRight:'5%'
+}
+const accountTag = {
+  fontFamily:'Noto Serif Display',
+  color:'white',
+  fontWeight:'bold',
+  
+}
 
 export default function Navbar() {
   const student_details = JSON.parse(
@@ -83,8 +99,12 @@ export default function Navbar() {
               </div>
             ):
             (
-            <Link to="/account" className={classes.link} style={{marginRight:'10%'}}>
-              <img src={userimg} style={img_style} alt="no_img"/>
+            <Link to="/account" className={classes.link} style={{marginRight:'5%'}}>
+              <span>
+              <AccountBox
+                style={iconStyles}
+              />
+              </span>
 
               Welcome {student_details.userID}
               

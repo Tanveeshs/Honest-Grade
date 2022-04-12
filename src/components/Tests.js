@@ -25,9 +25,10 @@ const containerStyles = {
     margin:'3%',
 }
 const main = {
-    backgroundColor:'#afccdb',
+    backgroundColor:'lightgray',
     width:'100vw',
-    height:'100vh'
+    // height:'100vh'
+    minHeight:'100%'
 }
 const iconStyles={
     marginRight:'10px',

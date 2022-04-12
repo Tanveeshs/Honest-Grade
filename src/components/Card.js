@@ -9,7 +9,8 @@ const Card = (props) => {
         borderRadius:'10px 10px 10px',
         marginBottom:'2%',
         backgroundColor:'#32a6c9',
-        marginRight:'3%'
+        marginRight:'3%',
+        fontFamily:'Noto Serif Display'
     }
     
     return ( 

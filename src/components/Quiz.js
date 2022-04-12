@@ -16,6 +16,7 @@ import {
 import quizReducer from '../Reducers/QuizReducer'
 import axios from "axios";
 import '../App.css';
+import Card from './Card'
 
 export function Quiz(props) {
     const questions1= props.questions;
@@ -37,14 +38,20 @@ export function Quiz(props) {
     const [state, dispatch] = useReducer(quizReducer, initialState)
     let {first,questions, currentQuestion, currentAnswer, answers, error, end_quiz_flag,numberQuestions1 } = state;
     if(end_quiz_flag){
-        return (<div style={{flex:'1 1 auto'}}>
-            <h1>TEST END</h1>
-            <Button color='default' variant='contained'>
-                <Link to="/">
-                Back to home
-                </Link>
-            </Button>
-        </div>)
+        return (
+        <Card>
+            <div style={{margin:'auto'}}>
+                <div style={{flex:'1 1 auto'}}>
+                <h2>The Test has ended. Please return to home page</h2>
+                <Button color='default' variant='contained'>
+                    <Link to="/">
+                    Back to home
+                    </Link>
+                </Button>
+            </div>
+        </div>
+        </Card>
+        )
     }
 
 

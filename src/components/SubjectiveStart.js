@@ -178,9 +178,14 @@ export function SubjectiveStart() {
                     </Modal>
                     <div style={container}>
                         <div name='footnote' style={footnoteStyles}>
-                            <p>This test is proctored. Please do not leave or minimize this page at any point of time.
-                                <span style={{fontWeight: 'bold'}}> Any changes that take place will lead to test being cancelled</span>
-                            </p>
+                            <h4>Rules</h4>
+                            <ol>
+                                <li>This test is AI proctored. Please do not make any sudden eye or body movements</li>
+                                <li>Any other electronic devices caught in the video frame, will result in the student being flagged.</li>
+                                <li>Please do not leave or minimize this page at any point of time.</li>
+                                <li>Any changes that take place will lead to test being cancelled</li>
+                            </ol>
+                           
                             <p style={{fontSize: '22px'}}>Welcome to your Test!</p>
                             <p style={{fontSize: '18px'}}>UserID: {userDetails.userID}</p>
                             <p style={{fontSize: '18px'}}>Subject: {test_details.subject}</p>

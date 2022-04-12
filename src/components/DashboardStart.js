@@ -10,6 +10,15 @@ import {
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Navbar from './Navbar'
+import {
+  SchoolSharp,
+  SchoolRounded,
+  Assessment,
+  AccountBox,
+  SettingsApplications,
+  QuestionAnswer,
+  
+} from '@material-ui/icons'
 
 const useStyles = makeStyles((theme) => ({
   navlinks: {
@@ -34,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 //styles
 const sidebarStyles = {
-  width:'25vw',
+  width:'20vw',
   height:'100%',
   position:'absolute',
   zIndex:'10',
@@ -52,8 +61,13 @@ const sidebarHeader = {
   justifyContent:'center',
 }
 const sidebarItem = {
-  marginTop:'2%',
+  marginTop:'5%',
   cursor:'pointer',
+}
+const iconStyles = {
+  color:'black',
+  fontSize:'30px',
+  marginRight:'5%'
 }
 
 function DashboardStart() {
@@ -74,6 +88,9 @@ function DashboardStart() {
   const takeToAcc = () => {
     nav.replace('/account')
   }
+  const takeToReport = () => {
+    nav.replace('/report')
+  }
   useEffect(()=>{
       if(student_details){
           console.log("SET LOGGED IN")
@@ -91,25 +108,59 @@ function DashboardStart() {
             </h3>
           </div>
           <div style={{marginTop:'45%',marginLeft:'8%'}}>
-          <h5 onClick={takeToTests} style={sidebarItem}>Tests</h5>
-          <h5 onClick={takeToAssn} style={sidebarItem}>Assignments</h5>
-          <h5 onClick={takeToAcc} style={sidebarItem}>Account</h5>
-          <h5 style={sidebarItem}>Other</h5>
+          <h5 onClick={takeToTests} style={sidebarItem}>
+            <span>
+              <SchoolSharp
+                style={iconStyles}
+              />
+            </span>
+            Tests</h5>
+          <h5 onClick={takeToAssn} style={sidebarItem}>
+          <span>
+              <QuestionAnswer
+                style={iconStyles}
+              />
+            </span>
+            Assignments</h5>
+          <h5 style={sidebarItem} onClick={takeToReport}>
+          <span>
+              <Assessment
+                style={iconStyles}
+              />
+            </span>
+            Student Report</h5>
+          <h5 onClick={takeToAcc} style={sidebarItem}>
+          <span>
+              <AccountBox
+                style={iconStyles}
+              />
+            </span>
+            Account</h5>
+          <h5 style={sidebarItem}>
+          <span>
+              <SettingsApplications
+                style={iconStyles}
+              />
+            </span>
+            Other</h5>
           </div>
         </div>
       </div>
       <AppBar position="static" style={{backgroundColor:'black'}}>
       <CssBaseline />
       <Toolbar>
-          <div className={classes.navlinks} style={{marginLeft:"40%"}}>
+          <div className={classes.navlinks} style={{marginLeft:"79%"}}>
             
             {loggedIn ? 
               (
                 <div>
-                  <Link to="/" className={classes.link} style={{marginRight:'50px'}}>
-                Home
-            </Link>
+
                 <Link to="/tests" className={classes.link}>
+                  <span>
+                  <AccountBox
+                style={{iconStyles,color:'white',fontSize:'24px',marginRight:'5px'}}
+              />
+                  </span>
                   Welcome {student_details.userID}
                 </Link>
                 </div>

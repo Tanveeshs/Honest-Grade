@@ -26,7 +26,8 @@ const videoConstraints = {
 };
 const bg = {
     backgroundColor:'#afccdb',
-    margin:'5%'
+    padding:'5%',
+    minHeight:'100vh'
 }
 
 function QuizStart() {
@@ -136,7 +137,7 @@ function QuizStart() {
     function quizDetails() {
         return (
             <Card style={{backgroundColor:'lightblue'}}>
-                <h2>Confirm your details</h2>
+                <h2 style={{fontWeight:'bold'}}>Confirm your details</h2>
                 <ul>
                     <li>Student ID: {userDetails.userID}</li>
                     <li>Subject Name: {test_details.subject}</li>
@@ -149,7 +150,7 @@ function QuizStart() {
 
     if (!disp) {
         return (
-            <div>
+            <div style={bg}>
                 {quizDetails()}
                 <Modal
                     isOpen={modalIsOpen}
@@ -163,6 +164,10 @@ function QuizStart() {
                 </Modal>
                 <Quiz disp={disp} questions={questions} assessmentId={assessmentId} examId={examId}
                       numberQuestions={numberQuestions}></Quiz>
+                <div style={{marginTop:'5%'}}>
+                    <h4 style={{fontFamily:'Noto Serif Display'}}>
+                        Video feed
+                    </h4>
                 <Webcam
                     audio={false}
                     height={200}
@@ -171,12 +176,14 @@ function QuizStart() {
                     screenshotFormat="image/jpeg"
                     videoConstraints={videoConstraints}
                 />
+                </div>
+                
             </div>
         );
     } else {
 
         return (
-            <div style={bg}>
+            <div>
                 <Modal
                     isOpen={modalIsOpen}
                     onAfterOpen={afterOpenModal}
@@ -197,6 +204,7 @@ function QuizStart() {
                     ref={webcamRef}
                     screenshotFormat="image/jpeg"
                     videoConstraints={videoConstraints}
+                    // style={webcamStyles}
                 />
                 Transcript {transcript}
             </div>

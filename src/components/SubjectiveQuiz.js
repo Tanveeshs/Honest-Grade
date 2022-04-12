@@ -90,10 +90,7 @@ export function SubjectiveQuiz(props) {
         flexDirection:'column',
         justifyContent:'center',
         alignItems:'center',
-        backgroundImage:'url('+ bgimg +')',
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
+        backgroundColor:'white',
         width: '100vw',
         height: '100vh',
         
@@ -115,7 +112,7 @@ export function SubjectiveQuiz(props) {
         fontWeight:'bold',
         textTransform:'uppercase',
         fontSize:'16px',
-        backgroundColor:'orange',
+        backgroundColor:'#80cae0',
         border:'1px solid white',
         borderRadius:'5px'
     }
@@ -124,7 +121,7 @@ export function SubjectiveQuiz(props) {
         if(scoreLoading===false && score===undefined){
             return (
             <div style={containerStyles}>
-                <h1>Subjective Answer test</h1>
+                <h2 style={{fontFamily:'Noto Serif Display',}}>Subjective Answer test</h2>
                 <div style={questionStyles}>
                     <div style={{
                         display:'flex',
@@ -133,12 +130,13 @@ export function SubjectiveQuiz(props) {
                         marginBottom:'5%'
                     }}>
                         {questions[count] !== undefined ?
-                            <h2>Q. {questions[count].question.question}</h2>: <h2>Loading...</h2>}
+                            <h2 style={{fontFamily:'Noto Serif Display',}}>Q. {questions[count].question.question}</h2>: <h2>Loading...</h2>}
                         {questions[count] !== undefined ?
                             <p style={{
                                 display:'flex',
                                 flex:'flex-end',
-                                fontSize:'14px'
+                                fontSize:'14px',
+                                fontFamily:'Noto Serif Display',
                             }}>{questions[count].question.outOf} Marks</p>: <h2>Loading...</h2>}
                     </div>
                     <textarea
@@ -171,12 +169,15 @@ export function SubjectiveQuiz(props) {
             else{
                 return(
                     <div style={containerStyles}>
-                        <h1>CONGRATULATIONS!</h1>
-                        <h2>You have scored {score} out of {totalMarks}</h2>
-                        <h2 style={{marginTop:'5%'}}>TEST END</h2>
-                            <Button color='default' variant='contained'>
+                        <h3 style={{fontFamily:'Noto Serif Display'}}>CONGRATULATIONS!</h3>
+                        <h4 style={{fontFamily:'Noto Serif Display'}}>You have scored {score} out of {totalMarks}</h4>
+                        <h3 style={{fontFamily:'Noto Serif Display'}}>TEST END</h3>
+                            <Button color='default' variant='contained' style={{marginTop:'5%',fontFamily:'Noto Serif Display'}}>
                                 <Link to="/">
                                 Back to home
+                                </Link>
+                                <Link to="/report">
+                                    View your test reports
                                 </Link>
                             </Button>
                     </div>
