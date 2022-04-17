@@ -49,17 +49,21 @@ const Tests = () => {
         color:'white',
 
     }
-    console.log(student_details)
+    console.log(student_details._id);
     const loadTests = async () => {
         const data = await axios.post('https://honestgrade.herokuapp.com/student/getCurrentExams',{
-            id:student_details._id
+            userID:student_details._id
         })
         .then(res=>{
-            console.log(res.data.exams)
+            console.log("RESP",res.data)
             setTimeout(() => {
 
             }, 3000);
-            setPendingTests(res.data.exams)
+            if(res.data.success===1){
+                setPendingTests(res.data.exams)
+            }else{
+                setPendingTests([])
+            }
             setTestsLoaded(true)
         })
         .catch(err =>console.log(err))

@@ -77,6 +77,7 @@ function QuizStart() {
 
     const webcamRef = useRef(null);
     const capture = (assessmentId) => {
+        console.log("CAPTURE CALLED FOR ASSESSMENT ID",assessmentId)
         if (webcamRef && webcamRef.current && assessmentId) {
             const imageSrc = webcamRef.current.getScreenshot();
             axios.post('http://localhost:5000/proctor', {

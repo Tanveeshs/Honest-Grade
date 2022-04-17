@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import userimg from '../assets/userimg.jpeg'
 import Navbar from './Navbar'
+import {Button} from "@material-ui/core";
 
 const Account = () => {
     const student_details = JSON.parse(localStorage.getItem('user_details'))
     const {userID,name} = student_details
-    
+    const logoutClick = ()=>{
+        localStorage.removeItem('user_details');
+        window.location.href = '/login'
+    }
     //styles
     const container = {
         height:'auto',
@@ -36,6 +40,7 @@ const Account = () => {
             <h2>Account Details</h2>
             <p>Name: {name}</p>
             <p>Portal Username: {userID}</p>
+             <Button onClick={logoutClick}>Logout</Button>
         </div>
         </>
        
