@@ -115,13 +115,13 @@ function DashboardStart() {
               />
             </span>
             Tests</h5>
-          <h5 onClick={takeToAssn} style={sidebarItem}>
-          <span>
-              <QuestionAnswer
-                style={iconStyles}
-              />
-            </span>
-            Assignments</h5>
+          {/*<h5 onClick={takeToAssn} style={sidebarItem}>*/}
+          {/*<span>*/}
+          {/*    <QuestionAnswer*/}
+          {/*      style={iconStyles}*/}
+          {/*    />*/}
+          {/*  </span>*/}
+          {/*  Assignments</h5>*/}
           <h5 style={sidebarItem} onClick={takeToReport}>
           <span>
               <Assessment

@@ -69,7 +69,7 @@ export function SubjectiveQuiz(props) {
     }
 
     function onButtonClick() {
-        setScoreLoading(true)
+        // setScoreLoading(true)
         console.log("BUTTON CLICK")
         axios.post('https://honestgrade.herokuapp.com/assessment/answerSubjectiveAssessment', {
             answers: answer,
