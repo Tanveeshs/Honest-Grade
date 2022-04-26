@@ -10,7 +10,7 @@ function Answers() {
 
 
     return (
-        <>n
+        <>
             <Answer
                 letter='a'
                 answer={question.question.options[0]}

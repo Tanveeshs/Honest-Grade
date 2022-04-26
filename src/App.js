@@ -15,6 +15,7 @@ import Assignments from './components/Assignments'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PrivateRoute from "./utils/PrivateRoute";
 import Report from './components/Report'
+import LoginRoute from "./utils/LoginRoute";
 
 
 export default function App() {
@@ -26,7 +27,8 @@ export default function App() {
                     <PrivateRoute exact path="/subjective/:id" component={SubjectiveStart}/>
                     <PrivateRoute exact path="/" component={DashboardStart}/>
                     <PrivateRoute exact path="/tests" component={Tests}/>
-                    <Route exact path="/login" component={Login}/>
+                    <PrivateRoute exact path="/assn" component={Assignments}/>
+                    <LoginRoute exact path="/login" component={Login}/>
                     <PrivateRoute exact path="/account" component={Account}/>
                     <PrivateRoute exact path="/report" component={Report}/>
                 </Switch>
