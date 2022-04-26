@@ -102,8 +102,7 @@ const Tests = () => {
                     {
                     pendingTests.length !== 0?(
                         pendingTests.map(item=>{
-                            let due_date = new Date(parseInt(item.scheduleDate.substr(6)));
-                            due_date = due_date.toDateString();
+                            let due_date = item.expiryDate.split('T')[0];
                             const test_details = {
                                 test_id:item._id,
                                 subject:item.name
